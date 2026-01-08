@@ -1,6 +1,6 @@
 # Testing Guide
 
-Safe, isolated testing environment for agentic slash commands using Docker.
+Safe, isolated testing environment for Claude Code Powertools using Docker.
 
 ## Overview
 
@@ -15,12 +15,11 @@ This test suite uses **Alpine Linux** (minimal ~5MB image) in Docker containers 
 
 ```bash
 # Run all tests
-cd test
+cd tests
 ./run-tests.sh
 
 # Run specific test
 ./run-tests.sh claude      # Test Claude Code installation only
-./run-tests.sh universal   # Test universal installer
 
 # Rebuild and run tests
 ./run-tests.sh --build all
@@ -33,21 +32,9 @@ cd test
 
 ### `claude`
 Tests Claude Code installation script in isolation:
-- Creates symlinks to `~/.claude/commands/`
-- Verifies all commands are installed
+- Creates symlinks to `~/.claude/skills/`
+- Verifies all skills are installed
 - Checks symlink count
-
-### `codex`
-Tests Codex installation script in isolation:
-- Creates symlinks to `~/.codex/commands/`
-- Verifies all commands are installed
-- Checks symlink count
-
-### `universal`
-Tests the universal installer (`install.sh`):
-- Installs for both Claude Code and Codex
-- Verifies both platforms are set up correctly
-- Simulates user input (y/n answers)
 
 ### `idempotent`
 Tests running the installer multiple times:
@@ -62,12 +49,10 @@ Tests symlink integrity:
 - Validates symlink targets
 
 ### `warnings`
-Tests warning messages in all installers:
-- Verifies main installer shows overwrite warning
+Tests warning messages in the installer:
+- Verifies installer shows overwrite warning
 - Checks backup functionality is mentioned
 - Validates cancellation functionality
-- Ensures all platform-specific installers show warnings
-- Confirms all installers mention backup functionality
 
 ### `backup`
 Tests automatic backup functionality:
@@ -97,8 +82,6 @@ Options:
 Tests:
   all              Run all tests (default)
   claude           Test Claude Code installation only
-  codex            Test Codex installation only
-  universal        Test universal installer
   idempotent       Test idempotency
   symlinks         Test symlink integrity
   warnings         Test warning messages
@@ -118,8 +101,8 @@ Tests:
 # Manual testing in interactive mode
 ./run-tests.sh interactive
 # Then inside container:
-bash install.sh
-ls -la ~/.claude/commands/
+bash scripts/install-claude.sh
+ls -la ~/.claude/skills/
 exit
 ```
 
@@ -129,14 +112,14 @@ You can also run tests directly with docker-compose:
 
 ```bash
 # Run specific service
-docker-compose run --rm test-claude
+docker-compose run --rm claude
 
 # Build and run
 docker-compose build
-docker-compose run --rm test-universal
+docker-compose run --rm symlinks
 
 # Interactive mode
-docker-compose run --rm test-interactive
+docker-compose run --rm interactive
 ```
 
 ## Test Environment
@@ -146,7 +129,7 @@ Each test runs in a fresh Alpine Linux container with:
 - `git` - Version control (if needed)
 - `coreutils` - Standard Unix utilities
 - Test user (`testuser`) - Non-root user simulation
-- Repository mounted at `/home/testuser/agentic-slash-commands`
+- Repository mounted at `/home/testuser/claude-powertools`
 
 ## Why Alpine Linux?
 
@@ -161,7 +144,7 @@ Docker automatically removes containers after tests (`--rm` flag).
 
 To remove the test image:
 ```bash
-docker rmi agentic-test-alpine
+docker rmi powertools-test-alpine
 ```
 
 To clean all Docker resources:
@@ -204,10 +187,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Run tests
         run: |
-          cd test
+          cd tests
           ./run-tests.sh --build all
 ```
 

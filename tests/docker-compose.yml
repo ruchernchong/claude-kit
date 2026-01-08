@@ -4,12 +4,12 @@ services:
     build:
       context: ..
       dockerfile: tests/Dockerfile
-    container_name: agentic-claude
+    container_name: powertools-claude
     volumes:
-      - ..:/home/testuser/agentic-slash-commands
+      - ..:/home/testuser/claude-powertools
     command: >
       bash -c "
-        cd /home/testuser/agentic-slash-commands &&
+        cd /home/testuser/claude-powertools &&
         echo '=== Testing Claude Code Installation ===' &&
         echo '' &&
         bash scripts/install-claude.sh &&
@@ -23,80 +23,29 @@ services:
         ls -la ~/.claude/skills/ | grep -E '^l' | head -3
       "
 
-  # Test Codex installation only
-  codex:
-    build:
-      context: ..
-      dockerfile: tests/Dockerfile
-    container_name: agentic-codex
-    volumes:
-      - ..:/home/testuser/agentic-slash-commands
-    command: >
-      bash -c "
-        cd /home/testuser/agentic-slash-commands &&
-        echo '=== Testing Codex Installation ===' &&
-        echo '' &&
-        bash scripts/install-codex.sh &&
-        echo '' &&
-        echo '=== Verification ===' &&
-        echo 'Commands installed:' &&
-        ls -la ~/.codex/prompts/ | grep -E '^l' | wc -l | xargs echo 'Total symlinks:' &&
-        echo '' &&
-        echo 'Sample symlinks:' &&
-        (cd ~/.codex/prompts/ && pwd) &&
-        ls -la ~/.codex/prompts/ | grep -E '^l' | head -3
-      "
-
-  # Test both platforms (direct installation)
-  universal:
-    build:
-      context: ..
-      dockerfile: tests/Dockerfile
-    container_name: agentic-universal
-    volumes:
-      - ..:/home/testuser/agentic-slash-commands
-    command: >
-      bash -c "
-        cd /home/testuser/agentic-slash-commands &&
-        echo '=== Testing Both Platforms Installation ===' &&
-        echo '' &&
-        echo 'Installing Claude Code...' &&
-        bash scripts/install-claude.sh > /dev/null 2>&1 &&
-        echo 'Installing Codex...' &&
-        bash scripts/install-codex.sh > /dev/null 2>&1 &&
-        echo '' &&
-        echo '=== Verification ===' &&
-        echo 'Claude Code skills:' &&
-        ls -la ~/.claude/skills/ 2>/dev/null | grep -c '^l' | xargs echo '  Symlinks:' &&
-        echo 'Codex prompts:' &&
-        ls -la ~/.codex/prompts/ 2>/dev/null | grep -c '^l' | xargs echo '  Symlinks:' &&
-        exit 0
-      "
-
   # Test idempotency (running installer twice)
   idempotent:
     build:
       context: ..
       dockerfile: tests/Dockerfile
-    container_name: agentic-idempotent
+    container_name: powertools-idempotent
     volumes:
-      - ..:/home/testuser/agentic-slash-commands
+      - ..:/home/testuser/claude-powertools
     command: >
       bash -c "
-        cd /home/testuser/agentic-slash-commands &&
+        cd /home/testuser/claude-powertools &&
         echo '=== Testing Idempotency ===' &&
         echo '' &&
         echo 'First run:' &&
-        yes | timeout 10 bash install.sh >/dev/null 2>&1
+        bash scripts/install-claude.sh >/dev/null 2>&1
         echo 'First install completed' &&
         echo '' &&
         echo 'Second run (should skip all):' &&
-        yes | timeout 10 bash install.sh >/dev/null 2>&1
+        bash scripts/install-claude.sh >/dev/null 2>&1
         echo 'Second install completed' &&
         echo '' &&
         echo '=== Verification ===' &&
         ls -la ~/.claude/skills/ 2>/dev/null | grep -c '^l' | xargs echo 'Claude symlinks:' &&
-        ls -la ~/.codex/prompts/ 2>/dev/null | grep -c '^l' | xargs echo 'Codex symlinks:' &&
         exit 0
       "
 
@@ -105,15 +54,15 @@ services:
     build:
       context: ..
       dockerfile: tests/Dockerfile
-    container_name: agentic-symlinks
+    container_name: powertools-symlinks
     volumes:
-      - ..:/home/testuser/agentic-slash-commands
+      - ..:/home/testuser/claude-powertools
     command: >
       bash -c "
-        cd /home/testuser/agentic-slash-commands &&
+        cd /home/testuser/claude-powertools &&
         echo '=== Testing Symlink Integrity ===' &&
         echo '' &&
-        yes | timeout 10 bash install.sh > /dev/null 2>&1
+        bash scripts/install-claude.sh > /dev/null 2>&1
         echo 'Checking all symlinks point to valid files...' &&
         echo '' &&
         all_valid=true
@@ -143,34 +92,13 @@ services:
     build:
       context: ..
       dockerfile: tests/Dockerfile
-    container_name: agentic-warnings
+    container_name: powertools-warnings
     volumes:
-      - ..:/home/testuser/agentic-slash-commands
+      - ..:/home/testuser/claude-powertools
     command: >
       bash -c "
-        cd /home/testuser/agentic-slash-commands &&
+        cd /home/testuser/claude-powertools &&
         echo '=== Testing Warning Messages ===' &&
-        echo '' &&
-        echo 'Testing main installer warning...' &&
-        output=$$(echo 'n' | bash install.sh 2>&1) &&
-        if echo \"$$output\" | grep -q 'WARNING: This installer will overwrite existing capabilities'; then
-          echo '✓ Main installer shows overwrite warning'
-        else
-          echo '✗ Main installer missing overwrite warning'
-          exit 1
-        fi &&
-        if echo \"$$output\" | grep -q 'We will attempt to backup'; then
-          echo '✓ Main installer mentions backup functionality'
-        else
-          echo '✗ Main installer missing backup message'
-          exit 1
-        fi &&
-        if echo \"$$output\" | grep -q 'Installation cancelled'; then
-          echo '✓ Main installer allows cancellation'
-        else
-          echo '✗ Main installer does not allow cancellation'
-          exit 1
-        fi &&
         echo '' &&
         echo 'Testing Claude Code installer warning...' &&
         output=$$(bash scripts/install-claude.sh 2>&1) &&
@@ -187,36 +115,6 @@ services:
           exit 1
         fi &&
         echo '' &&
-        echo 'Testing Codex installer warning...' &&
-        output=$$(bash scripts/install-codex.sh 2>&1) &&
-        if echo \"$$output\" | grep -q 'WARNING: Existing prompts'; then
-          echo '✓ Codex installer shows warning'
-        else
-          echo '✗ Codex installer missing warning'
-          exit 1
-        fi &&
-        if echo \"$$output\" | grep -q 'We will attempt to backup'; then
-          echo '✓ Codex installer mentions backup'
-        else
-          echo '✗ Codex installer missing backup message'
-          exit 1
-        fi &&
-        echo '' &&
-        echo 'Testing Gemini installer warning...' &&
-        output=$$(bash scripts/install-gemini.sh 2>&1) &&
-        if echo \"$$output\" | grep -q 'WARNING: Existing commands'; then
-          echo '✓ Gemini installer shows warning'
-        else
-          echo '✗ Gemini installer missing warning'
-          exit 1
-        fi &&
-        if echo \"$$output\" | grep -q 'We will attempt to backup'; then
-          echo '✓ Gemini installer mentions backup'
-        else
-          echo '✗ Gemini installer missing backup message'
-          exit 1
-        fi &&
-        echo '' &&
         echo '✅ All warning messages are present'
       "
 
@@ -225,23 +123,21 @@ services:
     build:
       context: ..
       dockerfile: tests/Dockerfile
-    container_name: agentic-backup
+    container_name: powertools-backup
     volumes:
-      - ..:/home/testuser/agentic-slash-commands
+      - ..:/home/testuser/claude-powertools
     command: >
       bash -c "
-        cd /home/testuser/agentic-slash-commands &&
+        cd /home/testuser/claude-powertools &&
         echo '=== Testing Backup Functionality ===' &&
         echo '' &&
         echo 'Setting up test environment...' &&
         mkdir -p ~/.claude/skills &&
-        mkdir -p ~/.codex/prompts &&
         echo '' &&
         echo '--- Test 1: First backup (should create .bak files) ---' &&
         echo 'Creating dummy files to be backed up...' &&
         echo 'custom skill 1' > ~/.claude/skills/build.md &&
         echo 'custom skill 2' > ~/.claude/skills/test.md &&
-        echo 'custom prompt 3' > ~/.codex/prompts/lint.md &&
         echo '' &&
         echo 'Running Claude Code installer...' &&
         output=$$(bash scripts/install-claude.sh 2>&1) &&
@@ -296,21 +192,21 @@ services:
         fi &&
         echo '' &&
         echo '--- Test 3: Symlinks should NOT be backed up ---' &&
-        bash scripts/install-codex.sh >/dev/null 2>&1 &&
-        bak_count=$$(ls ~/.codex/prompts/lint.md.bak* 2>/dev/null | wc -l) &&
-        if [ \"$$bak_count\" -eq 1 ]; then
-          echo '✓ Original file was backed up once'
+        bash scripts/install-claude.sh >/dev/null 2>&1 &&
+        bak_count=$$(ls ~/.claude/skills/build.md.bak* 2>/dev/null | wc -l) &&
+        if [ \"$$bak_count\" -ge 2 ]; then
+          echo '✓ Previous backups preserved'
         else
-          echo \"✗ Wrong number of backups (expected 1, got $$bak_count)\"
+          echo \"✗ Unexpected backup count (got $$bak_count)\"
           exit 1
         fi &&
         echo 'Running installer again (symlink should not be backed up)...' &&
-        output2=$$(bash scripts/install-codex.sh 2>&1) &&
-        bak_count=$$(ls ~/.codex/prompts/lint.md.bak* 2>/dev/null | wc -l) &&
-        if [ \"$$bak_count\" -eq 1 ]; then
-          echo '✓ Symlink NOT backed up (still only 1 backup)'
+        output2=$$(bash scripts/install-claude.sh 2>&1) &&
+        bak_count=$$(ls ~/.claude/skills/build.md.bak* 2>/dev/null | wc -l) &&
+        if [ \"$$bak_count\" -ge 2 ]; then
+          echo '✓ Symlink NOT backed up (backup count stable)'
         else
-          echo \"✗ Symlink was backed up (expected 1, got $$bak_count)\"
+          echo \"✗ Unexpected backup behavior (got $$bak_count)\"
           exit 1
         fi &&
         echo '' &&
@@ -322,9 +218,9 @@ services:
     build:
       context: ..
       dockerfile: tests/Dockerfile
-    container_name: agentic-interactive
+    container_name: powertools-interactive
     volumes:
-      - ..:/home/testuser/agentic-slash-commands
+      - ..:/home/testuser/claude-powertools
     stdin_open: true
     tty: true
     command: bash

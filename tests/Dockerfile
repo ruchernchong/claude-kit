@@ -17,10 +17,10 @@ USER testuser
 WORKDIR /home/testuser
 
 # Copy the repository into the container
-COPY --chown=testuser:testuser . /home/testuser/agentic-slash-commands
+COPY --chown=testuser:testuser . /home/testuser/claude-powertools
 
 # Set working directory to the repository
-WORKDIR /home/testuser/agentic-slash-commands
+WORKDIR /home/testuser/claude-powertools
 
 # Default command shows help
-CMD ["bash", "-c", "echo 'Test environment ready. Available tests:' && echo '  - bash install.sh' && echo '  - bash scripts/install-claude.sh' && echo '  - bash scripts/install-codex.sh' && bash"]
+CMD ["bash", "-c", "echo 'Test environment ready. Available commands:' && echo '  - bash scripts/install-claude.sh' && bash"]

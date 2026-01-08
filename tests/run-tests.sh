@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Test runner for agentic slash commands
+# Test runner for Claude Code Powertools
 # Uses Docker Compose to run tests in isolated Alpine Linux containers
 
 set -e
@@ -48,11 +48,9 @@ show_help() {
     echo "Tests:"
     echo "  all              Run all tests (default)"
     echo "  claude           Test Claude Code installation only"
-    echo "  codex            Test Codex installation only"
-    echo "  universal        Test universal installer (both platforms)"
     echo "  idempotent       Test running installer twice (idempotency)"
     echo "  symlinks         Test symlink integrity"
-    echo "  warnings         Test warning messages in all installers"
+    echo "  warnings         Test warning messages in installer"
     echo "  backup           Test backup functionality (.bak files)"
     echo "  interactive      Start interactive test environment"
     echo ""
@@ -77,7 +75,7 @@ while [[ $# -gt 0 ]]; do
             show_help
             exit 0
             ;;
-        all|claude|codex|universal|idempotent|symlinks|warnings|backup|interactive)
+        all|claude|idempotent|symlinks|warnings|backup|interactive)
             TEST_TARGET="$1"
             shift
             ;;
@@ -98,7 +96,7 @@ fi
 
 # Run tests
 echo -e "${BLUE}╔═══════════════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║  Agentic Slash Commands - Docker Test Suite   ║${NC}"
+echo -e "${BLUE}║     Claude Code Powertools - Test Suite       ║${NC}"
 echo -e "${BLUE}╚═══════════════════════════════════════════════╝${NC}"
 echo ""
 
@@ -107,7 +105,7 @@ case $TEST_TARGET in
         echo -e "${BLUE}Running all tests...${NC}"
         echo ""
 
-        tests=("claude" "codex" "universal" "idempotent" "symlinks" "warnings" "backup")
+        tests=("claude" "idempotent" "symlinks" "warnings" "backup")
         failed_tests=()
 
         for test in "${tests[@]}"; do
@@ -147,14 +145,6 @@ case $TEST_TARGET in
         $COMPOSE_CMD run --rm claude
         ;;
 
-    codex)
-        $COMPOSE_CMD run --rm codex
-        ;;
-
-    universal)
-        $COMPOSE_CMD run --rm universal
-        ;;
-
     idempotent)
         $COMPOSE_CMD run --rm idempotent
         ;;
@@ -174,10 +164,8 @@ case $TEST_TARGET in
     interactive)
         echo -e "${BLUE}Starting interactive test environment...${NC}"
         echo -e "${BLUE}Available commands:${NC}"
-        echo -e "${BLUE}  - bash install.sh${NC}"
         echo -e "${BLUE}  - bash scripts/install-claude.sh${NC}"
-        echo -e "${BLUE}  - bash scripts/install-codex.sh${NC}"
-        echo -e "${BLUE}  - ls ~/.claude/commands/${NC}"
+        echo -e "${BLUE}  - ls ~/.claude/skills/${NC}"
         echo -e "${BLUE}  - exit (to leave)${NC}"
         echo ""
         $COMPOSE_CMD run --rm interactive
