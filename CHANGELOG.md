@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/ruchernchong/claude-kit/compare/v1.0.1...v1.1.0) (2026-01-08)
+
+
+### Features
+
+* add user memory symlink support ([9d2aab9](https://github.com/ruchernchong/claude-kit/commit/9d2aab930a30c07478b0faa00ec838b145960d90))
+
 ## [1.0.1](https://github.com/ruchernchong/claude-kit/compare/v1.0.0...v1.0.1) (2026-01-08)
 
 
