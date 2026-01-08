@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/ruchernchong/claude-kit/compare/v1.0.0...v1.0.1) (2026-01-08)
+
+
+### Bug Fixes
+
+* use existing commands in backup test ([9984a81](https://github.com/ruchernchong/claude-kit/commit/9984a81e05ded546ee33842904b64c3b571c3047))
+
 # 1.0.0 (2026-01-08)
 
 
