@@ -8,8 +8,10 @@
     "install-commands": "tsx src/install-commands.ts",
     "lint": "biome check",
     "format": "biome format --write src",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "test:docker": "tsx src/test-runner.ts",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "husky",
     "release": "semantic-release"
   },
@@ -26,9 +28,11 @@
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@types/node": "^22.10.0",
+    "@vitest/coverage-v8": "4.0.16",
     "husky": "^9.1.7",
     "semantic-release": "^25.0.2",
     "tsx": "^4.19.0",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vitest": "^4.0.16"
   }
 }
