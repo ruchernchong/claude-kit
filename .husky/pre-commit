@@ -1,0 +1,2 @@
+# Secrets detection - fail fast if secrets found
+gitleaks protect --staged --verbose
