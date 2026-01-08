@@ -24,25 +24,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: lts/*
+          cache: pnpm
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Lint
-        run: npm run lint
+        run: pnpm lint
 
       - name: Test
-        run: npm test
+        run: pnpm test
 
       - name: Build
-        run: npm run build
+        run: pnpm build
 ```
 
 ### Matrix Testing
@@ -52,44 +55,54 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18, 20, 22]
+        node-version: [20, 22, 24]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
+
+      - uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
-      - run: npm ci
-      - run: npm test
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test
 ```
 
 ### Caching
 ```yaml
+# Note: When using pnpm with actions/setup-node, caching is handled automatically
+# via the `cache: pnpm` option. Manual caching is only needed for special cases.
 - name: Cache dependencies
   uses: actions/cache@v4
   with:
-    path: ~/.npm
-    key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+    path: ~/.local/share/pnpm/store
+    key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
     restore-keys: |
-      ${{ runner.os }}-node-
+      ${{ runner.os }}-pnpm-
 ```
 
-### Deployment
+### Deployment to GitHub Pages
 ```yaml
 deploy:
   needs: build
   runs-on: ubuntu-latest
   if: github.ref == 'refs/heads/main'
 
-  steps:
-    - uses: actions/checkout@v4
+  permissions:
+    pages: write
+    id-token: write
 
-    - name: Deploy to Vercel
-      uses: amondnet/vercel-action@v25
-      with:
-        vercel-token: ${{ secrets.VERCEL_TOKEN }}
-        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-        vercel-args: '--prod'
+  environment:
+    name: github-pages
+    url: ${{ steps.deployment.outputs.page_url }}
+
+  steps:
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
 ```
 
 ## Common Patterns
@@ -104,23 +117,50 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - run: npm ci
-      - run: npm run lint
+      - uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
 
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - run: npm ci
-      - run: npm test -- --coverage
+      - uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test -- --coverage
 
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - run: npm ci
-      - run: npm run build
+      - uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
 ```
 
 ### Release Workflow
@@ -134,13 +174,21 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+          cache: pnpm
 
       - name: Build
-        run: npm ci && npm run build
+        run: pnpm install --frozen-lockfile && pnpm build
 
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2.5.0
         with:
           files: dist/*
 ```
@@ -148,13 +196,13 @@ jobs:
 ### Docker Build & Push
 ```yaml
 - name: Login to Docker Hub
-  uses: docker/login-action@v3
+  uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
   with:
     username: ${{ secrets.DOCKER_USERNAME }}
     password: ${{ secrets.DOCKER_PASSWORD }}
 
 - name: Build and push
-  uses: docker/build-push-action@v5
+  uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
   with:
     push: true
     tags: user/app:latest
@@ -162,7 +210,15 @@ jobs:
 
 ## Best Practices
 
-- Use specific action versions (@v4 not @latest)
+- For official GitHub Actions (`actions/*`), use version tags (e.g., `@v6`)
+- For third-party actions, use full commit hashes with version comments:
+  ```yaml
+  # Good - third-party action with commit hash
+  uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
+
+  # Good - official GitHub action with version tag
+  uses: actions/checkout@v6
+  ```
 - Cache dependencies
 - Run jobs in parallel when possible
 - Use secrets for sensitive data
