@@ -56,12 +56,55 @@ setup_symlink() {
   echo "✓ $name: created symlink -> $source_dir"
 }
 
+setup_file_symlink() {
+  local name="$1"
+  local source_file="$SCRIPT_DIR/$name"
+  local target_file="$HOME/$name"
+
+  # Verify source file exists
+  if [ ! -f "$source_file" ]; then
+    echo "Skipping $name: source file does not exist"
+    return 0
+  fi
+
+  # Check if symlink already exists
+  if [ -L "$target_file" ]; then
+    existing_target="$(readlink "$target_file")"
+    if [ "$existing_target" = "$source_file" ]; then
+      echo "✓ $name: already configured"
+      return 0
+    else
+      echo "✗ $name: symlink exists but points to: $existing_target"
+      return 1
+    fi
+  fi
+
+  # Handle existing file
+  if [ -e "$target_file" ]; then
+    echo "✗ $name: $target_file exists but is not a symlink. Please remove it manually."
+    return 1
+  fi
+
+  # Create symlink
+  ln -s "$source_file" "$target_file" || {
+    echo "✗ $name: failed to create symlink"
+    return 1
+  }
+
+  echo "✓ $name: created symlink -> $source_file"
+}
+
 echo "Setting up Claude Code symlinks..."
 echo
 
 errors=0
 for name in agents commands skills; do
   setup_symlink "$name" || ((errors++)) || true
+done
+
+# Setup file symlinks
+for name in .mcp.json; do
+  setup_file_symlink "$name" || ((errors++)) || true
 done
 
 echo

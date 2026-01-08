@@ -4,10 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-A collection of powertools for Claude Code including specialized agents and slash commands. Each is a markdown file with YAML frontmatter defining its configuration, followed by detailed behavioral instructions.
+A collection of powertools for Claude Code including specialized agents, slash commands, skills, and MCP server configuration. Each is a markdown file with YAML frontmatter defining its configuration, followed by detailed behavioral instructions.
 
 - **Agents**: Specialized subagents for complex tasks (code review, testing, debugging, etc.)
 - **Slash Commands**: User-invocable commands for development workflows (invoke with `/command-name`)
+- **Skills**: Multi-command workflows (e.g., security auditing)
+- **MCP Config**: Pre-configured MCP servers for extended capabilities
 
 ## Commands
 
@@ -19,8 +21,8 @@ pnpm install
 pnpm biome check .          # Check for issues
 pnpm biome check . --write  # Fix issues automatically
 
-# Setup symlinks (makes agents and commands available to Claude Code)
-./setup.sh                  # Creates ~/.claude/agents and ~/.claude/commands symlinks
+# Setup symlinks (makes agents, commands, skills, and MCP config available)
+./setup.sh                  # Creates symlinks in $HOME/.claude/ and $HOME/.mcp.json
 
 # Run tests
 cd tests && ./run-tests.sh
@@ -32,8 +34,9 @@ cd tests && ./run-tests.sh
 
 ```
 .
-├── agents/            # Specialized agent definitions (29 agents)
+├── agents/            # Specialized agent definitions (27 agents)
 ├── commands/          # Slash command definitions (16 commands)
+├── skills/            # Skills with multiple commands (security)
 ├── scripts/           # Installation scripts
 │   └── install-claude.sh
 ├── tests/             # Docker-based test infrastructure
@@ -42,6 +45,7 @@ cd tests && ./run-tests.sh
 │   └── run-tests.sh
 ├── lib/               # Shared utilities
 │   └── helpers.sh
+├── .mcp.json          # MCP server configuration (symlinked to $HOME/.mcp.json)
 └── setup.sh           # Main setup script
 ```
 
