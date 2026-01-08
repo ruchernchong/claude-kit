@@ -8,7 +8,7 @@ A collection of powertools for Claude Code including specialized agents, slash c
 
 - **Agents**: Specialized subagents for complex tasks (code review, testing, debugging, etc.)
 - **Slash Commands**: User-invocable commands for development workflows (invoke with `/command-name`)
-- **Skills**: Multi-command workflows (e.g., security auditing)
+- **Skills**: Multi-command workflows (security auditing, Tailwind CSS optimization)
 - **MCP Config**: Pre-configured MCP servers for extended capabilities
 
 ## Commands
@@ -35,17 +35,22 @@ pnpm test:docker            # Interactive test runner with Docker
 
 ```
 .
-├── agents/            # Specialized agent definitions (27 agents)
+├── agents/            # Specialized agent definitions (18 agents)
 ├── commands/          # Slash command definitions (6 commands)
-├── skills/            # Skills with multiple commands (security)
+├── skills/            # Skills with multiple commands (security, tailwind)
+│   ├── security/      # Security audit skill
+│   └── tailwind/      # Tailwind CSS optimization skill
 ├── src/               # TypeScript CLI source
 │   ├── setup.ts               # Interactive setup script
 │   ├── install-commands.ts    # Interactive command installer (supports --ci flag)
 │   ├── test-runner.ts         # Interactive test runner
-│   └── utils.ts               # Shared utilities (symlinks, file ops)
+│   ├── utils.ts               # Shared utilities (symlinks, file ops)
+│   └── utils.test.ts          # Unit tests for utilities
 ├── tests/             # Docker-based test infrastructure
 │   ├── Dockerfile
-│   └── docker-compose.yml
+│   ├── docker-compose.yml
+│   ├── run-tests.sh           # Test runner script
+│   └── README.md              # Test documentation
 ├── .mcp.json          # MCP server configuration (symlinked to $HOME/.mcp.json)
 └── tsconfig.json      # TypeScript configuration
 ```
@@ -83,14 +88,11 @@ allowed-tools: List of permitted tools
 
 - **Code quality**: code-reviewer, refactor-assistant, security-auditor
 - **Testing**: test-writer, debug-assistant
-- **Infrastructure**: ci-cd-helper, dockerfile-writer, cloud-architect, monitoring-setup
+- **Infrastructure**: ci-cd-helper
 - **Database**: database-optimizer, migration-assistant, cache-strategist
 - **Frontend**: component-builder, css-optimizer, responsive-checker, design-system-helper, accessibility-checker
-- **Documentation**: documentation-writer, logging-assistant
 - **Dependencies**: dependency-updater, library-evaluator
 - **API**: api-designer, api-researcher
-- **Git**: git-helper
-- **Architecture**: codebase-explorer, error-handler, performance-optimizer
 
 ### Slash Commands Available
 
@@ -117,6 +119,13 @@ All tools provide:
 - Progress spinners for long operations
 - Graceful cancellation (Ctrl+C)
 - Colored output and summaries
+
+## Skills
+
+Skills are multi-command workflows that combine multiple operations:
+
+- **security** - Run security audit with GitLeaks pre-commit hook setup and code analysis
+- **tailwind** - Audit and fix Tailwind CSS anti-patterns (spacing, size-*, gap, 8px grid, etc.)
 
 ## Conventions
 

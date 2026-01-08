@@ -10,7 +10,19 @@ export default defineConfig({
 			provider: "v8",
 			reporter: ["text", "html"],
 			include: ["src/**/*.ts"],
-			exclude: ["**/*.test.ts", "**/*.d.ts"],
+			exclude: [
+				"**/*.test.ts",
+				"**/*.d.ts",
+				"src/setup.ts",
+				"src/install-commands.ts",
+				"src/test-runner.ts",
+			],
+			thresholds: {
+				lines: 80,
+				functions: 80,
+				branches: 80,
+				statements: 80,
+			},
 		},
 	},
 });

@@ -11,7 +11,7 @@ A collection of powertools for [Claude Code](https://claude.ai/code) including s
 
 2. Run the interactive setup:
    ```bash
-   pnpm setup
+   pnpm bootstrap
    ```
 
    This creates symlinks:
@@ -34,48 +34,27 @@ Agents are specialized subagents for complex, multi-step tasks. They're invoked 
 | Agent | Description |
 |-------|-------------|
 | accessibility-checker | Checks UI code for accessibility compliance |
-| api-designer | Designs REST and GraphQL APIs |
+| api-designer | Designs REST APIs with Hono |
 | api-researcher | Researches APIs and integration patterns |
-| cache-strategist | Designs caching strategies |
+| cache-strategist | Designs caching strategies with Upstash Redis |
 | ci-cd-helper | Sets up CI/CD pipelines |
-| cloud-architect | Designs cloud infrastructure |
 | code-reviewer | Reviews code for quality, bugs, and security |
-| codebase-explorer | Explores and explains codebase structure |
-| component-builder | Builds reusable UI components |
-| css-optimizer | Optimizes CSS and removes unused styles |
-| database-optimizer | Optimizes database queries and schema |
+| component-builder | Builds reusable UI components with Next.js, HeroUI v3, and Tailwind CSS v4 |
+| css-optimizer | Optimizes CSS and Tailwind usage |
+| database-optimizer | Optimizes database queries and schema with Drizzle ORM and Neon Postgres |
 | debug-assistant | Diagnoses bugs from errors and stack traces |
 | dependency-updater | Analyzes dependencies and suggests updates |
-| design-system-helper | Maintains design system consistency |
-| dockerfile-writer | Creates optimized Dockerfiles |
-| documentation-writer | Generates documentation |
-| error-handler | Implements error handling patterns |
-| git-helper | Assists with git operations |
+| design-system-helper | Maintains design system consistency with HeroUI v3 and Tailwind CSS v4 |
 | library-evaluator | Evaluates libraries for project fit |
-| logging-assistant | Sets up structured logging |
-| migration-assistant | Helps plan database and schema migrations |
-| monitoring-setup | Configures monitoring and alerting |
-| performance-optimizer | Identifies performance bottlenecks |
+| migration-assistant | Helps plan database migrations with Drizzle |
 | refactor-assistant | Helps refactor code following best practices |
 | responsive-checker | Checks responsive design and breakpoints |
 | security-auditor | Audits code for security vulnerabilities |
-| test-writer | Generates tests for code |
+| test-writer | Generates tests with Vitest and React Testing Library |
 
 ## Available Slash Commands
 
 Slash commands are user-invocable. Type `/command-name` to invoke.
-
-### Core Development
-
-| Command | Description |
-|---------|-------------|
-| `/build` | Intelligent build detection and execution |
-| `/test` | Smart test runner (Jest, Vitest, Mocha, etc.) |
-| `/lint` | JavaScript/TypeScript linting and formatting |
-| `/setup` | Automated dependency installation |
-| `/clean` | Safe cleanup of build artifacts |
-
-### Git & Project Management
 
 | Command | Description |
 |---------|-------------|
@@ -85,6 +64,15 @@ Slash commands are user-invocable. Type `/command-name` to invoke.
 | `/new-pr` | Automated PR creation with commit analysis |
 | `/sync-docs` | Documentation maintenance for CLAUDE.md and README.md |
 | `/update-issue` | Update GitHub issue title, body, labels, or assignees |
+
+## Available Skills
+
+Skills are multi-command workflows that combine multiple operations:
+
+| Skill | Description |
+|-------|-------------|
+| `security` | Run security audit with GitLeaks pre-commit hook setup and code analysis |
+| `tailwind` | Audit and fix Tailwind CSS anti-patterns (spacing direction, size-*, gap preference, 8px grid, etc.) |
 
 ## Creating New Agents
 
@@ -148,7 +136,7 @@ pnpm test:docker
 
 The project uses TypeScript with [@clack/prompts](https://github.com/natemoo-re/clack) for interactive CLI tools:
 
-- `pnpm setup` - Interactive setup wizard
+- `pnpm bootstrap` - Interactive setup wizard
 - `pnpm install-commands` - Select commands to install
 - `pnpm test:docker` - Interactive test runner
 
