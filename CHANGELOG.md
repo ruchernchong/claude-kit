@@ -1,3 +1,11 @@
+# [1.2.0](https://github.com/ruchernchong/claude-kit/compare/v1.1.0...v1.2.0) (2026-01-08)
+
+
+### Features
+
+* add backup restoration to setup ([2ac3dcd](https://github.com/ruchernchong/claude-kit/commit/2ac3dcdc5a646e327975494e35943e42007c630f))
+* add interactive conflict handling to setup ([69e2c37](https://github.com/ruchernchong/claude-kit/commit/69e2c37bb1e8b7ded66b637b73ac65c4876d227e))
+
 # [1.1.0](https://github.com/ruchernchong/claude-kit/compare/v1.0.1...v1.1.0) (2026-01-08)
 
 
