@@ -9,14 +9,23 @@ A collection of powertools for [Claude Code](https://claude.ai/code) including s
    pnpm install
    ```
 
-2. Create symlinks to make agents and commands available to Claude Code:
+2. Run the interactive setup:
    ```bash
-   ./setup.sh
+   pnpm setup
    ```
 
    This creates symlinks:
    - `~/.claude/agents` -> `agents/`
    - `~/.claude/commands` -> `commands/`
+   - `~/.claude/skills` -> `skills/`
+   - `~/.mcp.json` -> `.mcp.json`
+
+3. (Optional) Install specific commands:
+   ```bash
+   pnpm install-commands
+   ```
+
+   Select which slash commands to install using an interactive multi-select menu.
 
 ## Available Agents
 
@@ -70,12 +79,12 @@ Slash commands are user-invocable. Type `/command-name` to invoke.
 
 | Command | Description |
 |---------|-------------|
-| `/commit` | Smart git commit with balanced change grouping |
-| `/create-branch` | Create branches with GitHub issue integration |
-| `/create-issue` | GitHub issue creation with template support |
-| `/create-pull-request` | Automated PR creation with commit analysis |
+| `/commit` | Smart git commit with GitLeaks security check and concise messages |
+| `/new-branch` | Create branches with GitHub issue integration |
+| `/new-issue` | GitHub issue creation with template support |
+| `/new-pr` | Automated PR creation with commit analysis |
+| `/sync-docs` | Documentation maintenance for CLAUDE.md and README.md |
 | `/update-issue` | Update GitHub issue title, body, labels, or assignees |
-| `/update-docs` | Documentation maintenance for CLAUDE.md and README.md |
 
 ## Creating New Agents
 
@@ -128,9 +137,27 @@ pnpm biome check .
 # Fix linting issues
 pnpm biome check . --write
 
-# Run tests
-cd tests && ./run-tests.sh
+# Type check TypeScript
+pnpm exec tsc --noEmit
+
+# Run tests (interactive)
+pnpm test:docker
 ```
+
+### CLI Tools
+
+The project uses TypeScript with [@clack/prompts](https://github.com/natemoo-re/clack) for interactive CLI tools:
+
+- `pnpm setup` - Interactive setup wizard
+- `pnpm install-commands` - Select commands to install
+- `pnpm test:docker` - Interactive test runner
+
+All CLI tools feature:
+- Beautiful interactive prompts
+- Multi-select menus
+- Progress spinners
+- Graceful cancellation (Ctrl+C)
+- Colored output
 
 ## Updating
 

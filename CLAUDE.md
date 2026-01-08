@@ -21,11 +21,12 @@ pnpm install
 pnpm biome check .          # Check for issues
 pnpm biome check . --write  # Fix issues automatically
 
-# Setup symlinks (makes agents, commands, skills, and MCP config available)
-./setup.sh                  # Creates symlinks in $HOME/.claude/ and $HOME/.mcp.json
+# Setup and installation
+pnpm setup                  # Interactive setup - creates symlinks in ~/.claude/ and ~/.mcp.json
+pnpm install-commands       # Interactive command installer - select which commands to install
 
 # Run tests
-cd tests && ./run-tests.sh
+pnpm test:docker            # Interactive test runner with Docker
 ```
 
 ## Architecture
@@ -37,16 +38,22 @@ cd tests && ./run-tests.sh
 ├── agents/            # Specialized agent definitions (27 agents)
 ├── commands/          # Slash command definitions (6 commands)
 ├── skills/            # Skills with multiple commands (security)
-├── scripts/           # Installation scripts
+├── src/               # TypeScript CLI source
+│   ├── setup.ts               # Interactive setup script
+│   ├── install-commands.ts    # Interactive command installer
+│   ├── test-runner.ts         # Interactive test runner
+│   └── utils.ts               # Shared utilities (symlinks, file ops)
+├── scripts/           # Legacy installation scripts (deprecated)
 │   └── install-claude.sh
 ├── tests/             # Docker-based test infrastructure
 │   ├── Dockerfile
 │   ├── docker-compose.yml
 │   └── run-tests.sh
-├── lib/               # Shared utilities
+├── lib/               # Legacy shell utilities (deprecated)
 │   └── helpers.sh
 ├── .mcp.json          # MCP server configuration (symlinked to $HOME/.mcp.json)
-└── setup.sh           # Main setup script
+├── tsconfig.json      # TypeScript configuration
+└── setup.sh           # Legacy setup script (use 'pnpm setup' instead)
 ```
 
 ### Agent Definition Format
@@ -102,7 +109,24 @@ Invoke with `/command-name`:
 - `/sync-docs` - Sync documentation with project state
 - `/update-issue` - Update GitHub issue title, body, labels, or assignees
 
+## CLI Tools
+
+The project includes interactive TypeScript CLI tools built with [@clack/prompts](https://github.com/natemoo-re/clack):
+
+- **setup.ts** - Interactive setup wizard with confirmation prompts and progress spinners
+- **install-commands.ts** - Multi-select interface for choosing which commands to install
+- **test-runner.ts** - Interactive test selection and Docker integration
+- **utils.ts** - Shared utilities for symlink management and file operations
+
+All tools provide:
+- Beautiful interactive prompts
+- Progress spinners for long operations
+- Graceful cancellation (Ctrl+C)
+- Colored output and summaries
+
 ## Conventions
 
 - Commits follow [Conventional Commits](https://www.conventionalcommits.org/) (enforced by commitlint)
 - Semantic versioning with automated releases via semantic-release
+- No single-letter variable names (use descriptive names like `result`, not `r`)
+- TypeScript code formatted with Biome
