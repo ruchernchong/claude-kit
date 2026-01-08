@@ -4,6 +4,9 @@
   "description": "",
   "type": "module",
   "scripts": {
+    "setup": "tsx src/setup.ts",
+    "install-commands": "tsx src/install-commands.ts",
+    "test:docker": "tsx src/test-runner.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "husky",
     "release": "semantic-release"
@@ -11,13 +14,19 @@
   "keywords": [],
   "author": "",
   "packageManager": "pnpm@10.22.0",
+  "dependencies": {
+    "@clack/prompts": "^0.10.0"
+  },
   "devDependencies": {
     "@biomejs/biome": "^2.3.11",
     "@commitlint/cli": "^20.3.0",
     "@commitlint/config-conventional": "^20.3.0",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
+    "@types/node": "^22.10.0",
     "husky": "^9.1.7",
-    "semantic-release": "^25.0.2"
+    "semantic-release": "^25.0.2",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.2"
   }
 }
