@@ -1,3 +1,4 @@
+import path from "node:path";
 import {
   cancel,
   confirm,
@@ -52,6 +53,14 @@ async function main() {
     const result = await createFileSymlink(fileName, ROOT_DIR, HOME_DIR);
     symlinkResults.push(result);
   }
+
+  // Create memory symlink (memory/CLAUDE.md -> ~/.claude/CLAUDE.md)
+  const memoryResult = await createFileSymlink(
+    "CLAUDE.md",
+    path.join(ROOT_DIR, "memory"),
+    CLAUDE_DIR,
+  );
+  symlinkResults.push(memoryResult);
 
   loadingSpinner.stop("Symlinks processed");
 
