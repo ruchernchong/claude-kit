@@ -22,7 +22,7 @@ pnpm biome check .          # Check for issues
 pnpm biome check . --write  # Fix issues automatically
 
 # Setup and installation
-pnpm init                   # Interactive setup - creates symlinks in ~/.claude/ and ~/.mcp.json
+pnpm bootstrap              # Interactive setup - creates symlinks in ~/.claude/ and ~/.mcp.json
 pnpm install-commands       # Interactive command installer - select which commands to install
 
 # Run tests

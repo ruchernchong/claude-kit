@@ -4,7 +4,7 @@
   "description": "",
   "type": "module",
   "scripts": {
-    "init": "tsx src/setup.ts",
+    "bootstrap": "tsx src/setup.ts",
     "install-commands": "tsx src/install-commands.ts",
     "lint": "biome check",
     "format": "biome format --write src",
