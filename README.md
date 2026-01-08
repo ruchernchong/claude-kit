@@ -2,8 +2,14 @@
 
 > A collection of powertools for [Claude Code](https://claude.ai/code) including specialized agents, slash commands, and skills.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![GitHub](https://img.shields.io/badge/github-ruchernchong%2Fclaude--kit-blue?logo=github)](https://github.com/ruchernchong/claude-kit)
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="License: MIT"></a>
+  <a href="https://github.com/ruchernchong/claude-kit/stargazers"><img src="https://img.shields.io/github/stars/ruchernchong/claude-kit?style=for-the-badge&logo=github" alt="GitHub Stars"></a>
+  <a href="https://github.com/ruchernchong/claude-kit/issues"><img src="https://img.shields.io/github/issues/ruchernchong/claude-kit?style=for-the-badge&logo=github" alt="GitHub Issues"></a>
+  <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-5.9-blue?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript"></a>
+  <a href="https://pnpm.io/"><img src="https://img.shields.io/badge/pnpm-10.x-orange?style=for-the-badge&logo=pnpm&logoColor=white" alt="pnpm"></a>
+  <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/Node.js-24-green?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js"></a>
+</p>
 
 ## Setup
 
