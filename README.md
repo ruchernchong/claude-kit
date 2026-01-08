@@ -1,4 +1,4 @@
-# Claude Code Powertools
+# Claude Kit
 
 A collection of powertools for [Claude Code](https://claude.ai/code) including specialized agents and slash commands.
 
