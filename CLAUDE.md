@@ -40,16 +40,12 @@ pnpm test:docker            # Interactive test runner with Docker
 ├── skills/            # Skills with multiple commands (security)
 ├── src/               # TypeScript CLI source
 │   ├── setup.ts               # Interactive setup script
-│   ├── install-commands.ts    # Interactive command installer
+│   ├── install-commands.ts    # Interactive command installer (supports --ci flag)
 │   ├── test-runner.ts         # Interactive test runner
 │   └── utils.ts               # Shared utilities (symlinks, file ops)
-├── scripts/           # Shell scripts used by Docker tests
-│   └── install-claude.sh
 ├── tests/             # Docker-based test infrastructure
 │   ├── Dockerfile
 │   └── docker-compose.yml
-├── lib/               # Shell utilities used by Docker tests
-│   └── helpers.sh
 ├── .mcp.json          # MCP server configuration (symlinked to $HOME/.mcp.json)
 └── tsconfig.json      # TypeScript configuration
 ```

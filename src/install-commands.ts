@@ -22,16 +22,13 @@ import {
 const COMMANDS_SOURCE_DIR = path.join(ROOT_DIR, "commands");
 const COMMANDS_INSTALL_DIR = path.join(CLAUDE_DIR, "commands");
 
-async function main() {
+// Parse CLI arguments
+const args = process.argv.slice(2);
+const ciMode = args.includes("--ci");
+const commandArgs = args.filter((arg) => !arg.startsWith("--"));
+
+async function runInteractive(availableCommands: string[]) {
   intro("Claude Code Commands Installer");
-
-  // Get available commands
-  const availableCommands = await getMarkdownFiles(COMMANDS_SOURCE_DIR);
-
-  if (availableCommands.length === 0) {
-    log.error("No command files found in commands directory");
-    process.exit(1);
-  }
 
   // Let user select which commands to install
   const selectedCommands = await multiselect({
@@ -66,8 +63,71 @@ async function main() {
     process.exit(0);
   }
 
-  const loadingSpinner = spinner();
-  loadingSpinner.start("Installing commands");
+  return selectedCommands;
+}
+
+async function runCI(
+  availableCommands: string[],
+  requestedCommands: string[],
+): Promise<string[]> {
+  console.log("Installing Claude Code slash commands (CI mode)");
+  console.log(`Source: ${COMMANDS_SOURCE_DIR}`);
+  console.log(`Target: ${COMMANDS_INSTALL_DIR}`);
+  console.log();
+
+  // Warn about overwriting
+  console.log("WARNING: Existing commands will be overwritten!");
+  console.log("Backups will be saved with a .bak extension.");
+  console.log();
+
+  // If specific commands requested, validate and use those
+  if (requestedCommands.length > 0) {
+    const validCommands: string[] = [];
+    for (const cmd of requestedCommands) {
+      if (availableCommands.includes(cmd)) {
+        validCommands.push(cmd);
+      } else {
+        console.log(`Skipped: /${cmd} (not found)`);
+      }
+    }
+    return validCommands;
+  }
+
+  // Default: install all commands
+  return availableCommands;
+}
+
+async function main() {
+  // Get available commands
+  const availableCommands = await getMarkdownFiles(COMMANDS_SOURCE_DIR);
+
+  if (availableCommands.length === 0) {
+    const message = "No command files found in commands directory";
+    if (ciMode) {
+      console.error(message);
+    } else {
+      log.error(message);
+    }
+    process.exit(1);
+  }
+
+  // Get commands to install based on mode
+  const selectedCommands = ciMode
+    ? await runCI(availableCommands, commandArgs)
+    : await runInteractive(availableCommands);
+
+  if (selectedCommands.length === 0) {
+    const message = "No commands to install";
+    if (ciMode) {
+      console.error(message);
+    } else {
+      log.warning(message);
+    }
+    process.exit(1);
+  }
+
+  const loadingSpinner = ciMode ? null : spinner();
+  loadingSpinner?.start("Installing commands");
 
   const installResults: SymlinkResult[] = [];
 
@@ -81,11 +141,21 @@ async function main() {
     installResults.push(result);
   }
 
-  loadingSpinner.stop("Commands processed");
+  loadingSpinner?.stop("Commands processed");
 
   // Log individual results
   for (const result of installResults) {
-    logResult(result);
+    if (ciMode) {
+      const symbol =
+        result.status === "installed"
+          ? "✓"
+          : result.status === "skipped"
+            ? "⏭"
+            : "✗";
+      console.log(`${symbol} ${result.name}: ${result.message}`);
+    } else {
+      logResult(result);
+    }
   }
 
   printSummary(installResults);
@@ -98,13 +168,28 @@ async function main() {
     .map((result) => result.name.replace(".md", ""));
 
   if (installedCommands.length > 0) {
-    log.message("Available commands (type /command-name):");
+    const message = "Available commands (type /command-name):";
+    if (ciMode) {
+      console.log();
+      console.log(message);
+    } else {
+      log.message(message);
+    }
     for (const command of installedCommands) {
-      log.info(`  /${command}`);
+      if (ciMode) {
+        console.log(`  /${command}`);
+      } else {
+        log.info(`  /${command}`);
+      }
     }
   }
 
-  outro("Installation complete!");
+  if (ciMode) {
+    console.log();
+    console.log("Installation complete!");
+  } else {
+    outro("Installation complete!");
+  }
 }
 
 main().catch(console.error);

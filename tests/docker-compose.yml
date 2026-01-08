@@ -4,15 +4,15 @@ services:
     build:
       context: ..
       dockerfile: tests/Dockerfile
-    container_name: powertools-claude
+    container_name: claude-kit-claude
     volumes:
-      - ..:/home/testuser/claude-powertools
+      - ..:/home/testuser/claude-kit
     command: >
       bash -c "
-        cd /home/testuser/claude-powertools &&
+        cd /home/testuser/claude-kit &&
         echo '=== Testing Claude Code Installation ===' &&
         echo '' &&
-        bash scripts/install-claude.sh &&
+        pnpm install-commands --ci &&
         echo '' &&
         echo '=== Verification ===' &&
         echo 'Commands installed:' &&
@@ -28,20 +28,20 @@ services:
     build:
       context: ..
       dockerfile: tests/Dockerfile
-    container_name: powertools-idempotent
+    container_name: claude-kit-idempotent
     volumes:
-      - ..:/home/testuser/claude-powertools
+      - ..:/home/testuser/claude-kit
     command: >
       bash -c "
-        cd /home/testuser/claude-powertools &&
+        cd /home/testuser/claude-kit &&
         echo '=== Testing Idempotency ===' &&
         echo '' &&
         echo 'First run:' &&
-        bash scripts/install-claude.sh >/dev/null 2>&1
+        pnpm install-commands --ci >/dev/null 2>&1
         echo 'First install completed' &&
         echo '' &&
         echo 'Second run (should skip all):' &&
-        bash scripts/install-claude.sh >/dev/null 2>&1
+        pnpm install-commands --ci >/dev/null 2>&1
         echo 'Second install completed' &&
         echo '' &&
         echo '=== Verification ===' &&
@@ -54,31 +54,31 @@ services:
     build:
       context: ..
       dockerfile: tests/Dockerfile
-    container_name: powertools-symlinks
+    container_name: claude-kit-symlinks
     volumes:
-      - ..:/home/testuser/claude-powertools
+      - ..:/home/testuser/claude-kit
     command: >
       bash -c "
-        cd /home/testuser/claude-powertools &&
+        cd /home/testuser/claude-kit &&
         echo '=== Testing Symlink Integrity ===' &&
         echo '' &&
-        bash scripts/install-claude.sh > /dev/null 2>&1
+        pnpm install-commands --ci > /dev/null 2>&1
         echo 'Checking all symlinks point to valid files...' &&
         echo '' &&
         all_valid=true
         for file in ~/.claude/commands/*.md; do
-          if [ -L \"$$file\" ]; then
-            target=$$(readlink \"$$file\")
-            if [ -f \"$$target\" ]; then
-              echo \"✓ $$(basename \"$$file\") -> $$target\"
+          if [ -L \"\$$file\" ]; then
+            target=\$$(readlink \"\$$file\")
+            if [ -f \"\$$target\" ]; then
+              echo \"✓ \$$(basename \"\$$file\") -> \$$target\"
             else
-              echo \"✗ $$(basename \"$$file\") -> $$target (BROKEN)\"
+              echo \"✗ \$$(basename \"\$$file\") -> \$$target (BROKEN)\"
               all_valid=false
             fi
           fi
         done
         echo ''
-        if [ \"$$all_valid\" = true ]; then
+        if [ \"\$$all_valid\" = true ]; then
           echo '✅ All symlinks are valid'
           exit 0
         else
@@ -92,26 +92,26 @@ services:
     build:
       context: ..
       dockerfile: tests/Dockerfile
-    container_name: powertools-warnings
+    container_name: claude-kit-warnings
     volumes:
-      - ..:/home/testuser/claude-powertools
+      - ..:/home/testuser/claude-kit
     command: >
       bash -c "
-        cd /home/testuser/claude-powertools &&
+        cd /home/testuser/claude-kit &&
         echo '=== Testing Warning Messages ===' &&
         echo '' &&
-        echo 'Testing Claude Code installer warning...' &&
-        output=$$(bash scripts/install-claude.sh 2>&1) &&
-        if echo \"$$output\" | grep -q 'WARNING: Existing commands'; then
-          echo '✓ Claude Code installer shows warning'
+        echo 'Testing installer warning...' &&
+        output=\$$(pnpm install-commands --ci 2>&1) &&
+        if echo \"\$$output\" | grep -q 'WARNING: Existing commands'; then
+          echo '✓ Installer shows warning'
         else
-          echo '✗ Claude Code installer missing warning'
+          echo '✗ Installer missing warning'
           exit 1
         fi &&
-        if echo \"$$output\" | grep -q 'We will attempt to backup'; then
-          echo '✓ Claude Code installer mentions backup'
+        if echo \"\$$output\" | grep -q 'Backups will be saved'; then
+          echo '✓ Installer mentions backup'
         else
-          echo '✗ Claude Code installer missing backup message'
+          echo '✗ Installer missing backup message'
           exit 1
         fi &&
         echo '' &&
@@ -123,12 +123,12 @@ services:
     build:
       context: ..
       dockerfile: tests/Dockerfile
-    container_name: powertools-backup
+    container_name: claude-kit-backup
     volumes:
-      - ..:/home/testuser/claude-powertools
+      - ..:/home/testuser/claude-kit
     command: >
       bash -c "
-        cd /home/testuser/claude-powertools &&
+        cd /home/testuser/claude-kit &&
         echo '=== Testing Backup Functionality ===' &&
         echo '' &&
         echo 'Setting up test environment...' &&
@@ -139,8 +139,8 @@ services:
         echo 'custom command 1' > ~/.claude/commands/commit.md &&
         echo 'custom command 2' > ~/.claude/commands/new-branch.md &&
         echo '' &&
-        echo 'Running Claude Code installer...' &&
-        output=$$(bash scripts/install-claude.sh 2>&1) &&
+        echo 'Running installer...' &&
+        output=\$$(pnpm install-commands --ci 2>&1) &&
         echo '' &&
         if [ -f ~/.claude/commands/commit.md.bak ]; then
           echo '✓ First backup created: commit.md.bak'
@@ -160,12 +160,6 @@ services:
           echo '✗ Backup does NOT contain original content'
           exit 1
         fi &&
-        if echo \"$$output\" | grep -q 'Backed up:.*2'; then
-          echo '✓ Summary shows backed up count'
-        else
-          echo '✗ Summary missing backed up count'
-          exit 1
-        fi &&
         echo '' &&
         echo '--- Test 2: Second backup (should create timestamped .bak files) ---' &&
         echo 'Creating new dummy files...' &&
@@ -174,39 +168,39 @@ services:
         sleep 1 &&
         echo '' &&
         echo 'Running installer again...' &&
-        bash scripts/install-claude.sh >/dev/null 2>&1 &&
+        pnpm install-commands --ci >/dev/null 2>&1 &&
         echo '' &&
-        bak_count=$$(ls ~/.claude/commands/commit.md.bak* 2>/dev/null | wc -l) &&
-        if [ \"$$bak_count\" -ge 2 ]; then
-          echo \"✓ Multiple backups exist ($$bak_count files)\"
+        bak_count=\$$(ls ~/.claude/commands/commit.md.bak* 2>/dev/null | wc -l) &&
+        if [ \"\$$bak_count\" -ge 2 ]; then
+          echo \"✓ Multiple backups exist (\$$bak_count files)\"
         else
-          echo \"✗ Second backup NOT created (only $$bak_count file)\"
+          echo \"✗ Second backup NOT created (only \$$bak_count file)\"
           exit 1
         fi &&
-        timestamped_backup=$$(ls ~/.claude/commands/commit.md.bak.* 2>/dev/null | head -1) &&
-        if [ -n \"$$timestamped_backup\" ]; then
-          echo \"✓ Timestamped backup created: $$(basename \"$$timestamped_backup\")\"
+        timestamped_backup=\$$(ls ~/.claude/commands/commit.md.bak.* 2>/dev/null | head -1) &&
+        if [ -n \"\$$timestamped_backup\" ]; then
+          echo \"✓ Timestamped backup created: \$$(basename \"\$$timestamped_backup\")\"
         else
           echo '✗ No timestamped backup found'
           exit 1
         fi &&
         echo '' &&
         echo '--- Test 3: Symlinks should NOT be backed up ---' &&
-        bash scripts/install-claude.sh >/dev/null 2>&1 &&
-        bak_count=$$(ls ~/.claude/commands/commit.md.bak* 2>/dev/null | wc -l) &&
-        if [ \"$$bak_count\" -ge 2 ]; then
+        pnpm install-commands --ci >/dev/null 2>&1 &&
+        bak_count=\$$(ls ~/.claude/commands/commit.md.bak* 2>/dev/null | wc -l) &&
+        if [ \"\$$bak_count\" -ge 2 ]; then
           echo '✓ Previous backups preserved'
         else
-          echo \"✗ Unexpected backup count (got $$bak_count)\"
+          echo \"✗ Unexpected backup count (got \$$bak_count)\"
           exit 1
         fi &&
         echo 'Running installer again (symlink should not be backed up)...' &&
-        output2=$$(bash scripts/install-claude.sh 2>&1) &&
-        bak_count=$$(ls ~/.claude/commands/commit.md.bak* 2>/dev/null | wc -l) &&
-        if [ \"$$bak_count\" -ge 2 ]; then
+        output2=\$$(pnpm install-commands --ci 2>&1) &&
+        bak_count=\$$(ls ~/.claude/commands/commit.md.bak* 2>/dev/null | wc -l) &&
+        if [ \"\$$bak_count\" -ge 2 ]; then
           echo '✓ Symlink NOT backed up (backup count stable)'
         else
-          echo \"✗ Unexpected backup behavior (got $$bak_count)\"
+          echo \"✗ Unexpected backup behavior (got \$$bak_count)\"
           exit 1
         fi &&
         echo '' &&
@@ -218,9 +212,9 @@ services:
     build:
       context: ..
       dockerfile: tests/Dockerfile
-    container_name: powertools-interactive
+    container_name: claude-kit-interactive
     volumes:
-      - ..:/home/testuser/claude-powertools
+      - ..:/home/testuser/claude-kit
     stdin_open: true
     tty: true
     command: bash

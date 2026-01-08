@@ -196,7 +196,7 @@ async function main() {
   } else if (testTarget === "interactive") {
     log.info("Starting interactive test environment...");
     log.info("Available commands:");
-    log.info("  - bash scripts/install-claude.sh");
+    log.info("  - pnpm install-commands --ci");
     log.info("  - ls ~/.claude/commands/");
     log.info("  - exit (to leave)");
     console.log();
