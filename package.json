@@ -1,7 +1,7 @@
 {
   "name": "claude-kit",
   "version": "0.1.0",
-  "description": "",
+  "description": "A collection of powertools for Claude Code including specialized agents, slash commands, and skills",
   "type": "module",
   "scripts": {
     "bootstrap": "tsx src/setup.ts",
@@ -15,8 +15,7 @@
     "prepare": "husky",
     "release": "semantic-release"
   },
-  "keywords": [],
-  "author": "",
+  "license": "MIT",
   "packageManager": "pnpm@10.22.0",
   "dependencies": {
     "@clack/prompts": "^0.10.0"

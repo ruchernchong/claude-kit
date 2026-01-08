@@ -1,6 +1,9 @@
 # Claude Kit
 
-A collection of powertools for [Claude Code](https://claude.ai/code) including specialized agents and slash commands.
+> A collection of powertools for [Claude Code](https://claude.ai/code) including specialized agents, slash commands, and skills.
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![GitHub](https://img.shields.io/badge/github-ruchernchong%2Fclaude--kit-blue?logo=github)](https://github.com/ruchernchong/claude-kit)
 
 ## Setup
 
@@ -155,6 +158,28 @@ git pull
 
 The symlinks automatically reflect updates - no reinstallation needed.
 
+## Project Structure
+
+```
+.
+├── agents/            # 18 specialized agent definitions
+├── commands/          # 6 slash command definitions
+├── skills/            # 2 multi-command workflows
+│   ├── security/      # Security audit skill
+│   └── tailwind/      # Tailwind CSS optimization skill
+├── src/               # TypeScript CLI source code
+├── tests/             # Docker-based test infrastructure
+└── .mcp.json          # MCP server configuration
+```
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for a detailed version history.
+
 ## License
 
-MIT
+MIT © [Ru Chern Chong](https://github.com/ruchernchong)
