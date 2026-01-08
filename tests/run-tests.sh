@@ -165,7 +165,7 @@ case $TEST_TARGET in
         echo -e "${BLUE}Starting interactive test environment...${NC}"
         echo -e "${BLUE}Available commands:${NC}"
         echo -e "${BLUE}  - bash scripts/install-claude.sh${NC}"
-        echo -e "${BLUE}  - ls ~/.claude/skills/${NC}"
+        echo -e "${BLUE}  - ls ~/.claude/commands/${NC}"
         echo -e "${BLUE}  - exit (to leave)${NC}"
         echo ""
         $COMPOSE_CMD run --rm interactive

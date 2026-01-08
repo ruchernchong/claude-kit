@@ -4,10 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-A collection of powertools for Claude Code including specialized agents and skills. Each is a markdown file with YAML frontmatter defining its configuration, followed by detailed behavioral instructions.
+A collection of powertools for Claude Code including specialized agents and slash commands. Each is a markdown file with YAML frontmatter defining its configuration, followed by detailed behavioral instructions.
 
 - **Agents**: Specialized subagents for complex tasks (code review, testing, debugging, etc.)
-- **Skills**: User-invocable capabilities and helper skills for development workflows
+- **Slash Commands**: User-invocable commands for development workflows (invoke with `/command-name`)
 
 ## Commands
 
@@ -19,8 +19,8 @@ pnpm install
 pnpm biome check .          # Check for issues
 pnpm biome check . --write  # Fix issues automatically
 
-# Setup symlinks (makes agents and skills available to Claude Code)
-./setup.sh                  # Creates ~/.claude/agents and ~/.claude/skills symlinks
+# Setup symlinks (makes agents and commands available to Claude Code)
+./setup.sh                  # Creates ~/.claude/agents and ~/.claude/commands symlinks
 
 # Run tests
 cd tests && ./run-tests.sh
@@ -33,7 +33,7 @@ cd tests && ./run-tests.sh
 ```
 .
 ├── agents/            # Specialized agent definitions (29 agents)
-├── skills/            # User-invocable and helper skills (16 skills)
+├── commands/          # Slash command definitions (16 commands)
 ├── scripts/           # Installation scripts
 │   └── install-claude.sh
 ├── tests/             # Docker-based test infrastructure
@@ -60,13 +60,13 @@ model: sonnet | opus | haiku
 [Detailed instructions and behavior guidelines]
 ```
 
-### Skill Definition Format
+### Slash Command Format
 
-Each skill in `skills/` follows this structure:
+Each command in `commands/` follows this structure:
 
 ```markdown
 ---
-description: Skill description (what it does and when to use it)
+description: Command description (what it does and when to use it)
 model: sonnet  # Optional: specify Claude model
 allowed-tools: List of permitted tools
 ---
@@ -87,9 +87,9 @@ allowed-tools: List of permitted tools
 - **Git**: git-helper
 - **Architecture**: codebase-explorer, error-handler, performance-optimizer
 
-### Skills Available
+### Slash Commands Available
 
-#### User-Invocable Skills (invoke with /skill-name)
+Invoke with `/command-name`:
 
 - `/build` - Intelligent build detection and execution
 - `/test` - Smart test runner (Jest, Vitest, Mocha, etc.)
@@ -103,17 +103,9 @@ allowed-tools: List of permitted tools
 - `/update-issue` - Update GitHub issue title, body, labels, or assignees
 - `/update-docs` - Documentation maintenance
 
-#### Helper Skills (auto-discovered)
-
-- `commit-message-generator` - Generates commit messages from staged changes
-- `branch-name-validator` - Validates branch names following conventions
-- `pr-description-generator` - Generates PR descriptions from commits
-- `project-structure-analyzer` - Detects package managers, build tools, test frameworks
-- `github-integration` - Handles GitHub API interactions
-
 ### Smart Detection System
 
-Skills automatically detect and adapt to:
+Commands automatically detect and adapt to:
 - **Package Managers**: pnpm > bun > yarn > npm (based on lock files)
 - **Build Tools**: Webpack, Vite, Rollup, Parcel, Next.js, Nuxt
 - **Testing**: Jest, Vitest, Mocha, Cypress, Playwright

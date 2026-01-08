@@ -1,6 +1,6 @@
 # Claude Code Powertools
 
-A collection of powertools for [Claude Code](https://claude.ai/code) including specialized agents and user-invocable skills.
+A collection of powertools for [Claude Code](https://claude.ai/code) including specialized agents and slash commands.
 
 ## Setup
 
@@ -9,14 +9,14 @@ A collection of powertools for [Claude Code](https://claude.ai/code) including s
    pnpm install
    ```
 
-2. Create symlinks to make agents and skills available to Claude Code:
+2. Create symlinks to make agents and commands available to Claude Code:
    ```bash
    ./setup.sh
    ```
 
    This creates symlinks:
    - `~/.claude/agents` -> `agents/`
-   - `~/.claude/skills` -> `skills/`
+   - `~/.claude/commands` -> `commands/`
 
 ## Available Agents
 
@@ -52,14 +52,14 @@ Agents are specialized subagents for complex, multi-step tasks. They're invoked 
 | security-auditor | Audits code for security vulnerabilities |
 | test-writer | Generates tests for code |
 
-## Available Skills
+## Available Slash Commands
 
-Skills are user-invocable capabilities. Invoke them with `/skill-name`.
+Slash commands are user-invocable. Type `/command-name` to invoke.
 
 ### Core Development
 
-| Skill | Description |
-|-------|-------------|
+| Command | Description |
+|---------|-------------|
 | `/build` | Intelligent build detection and execution |
 | `/test` | Smart test runner (Jest, Vitest, Mocha, etc.) |
 | `/lint` | JavaScript/TypeScript linting and formatting |
@@ -68,24 +68,14 @@ Skills are user-invocable capabilities. Invoke them with `/skill-name`.
 
 ### Git & Project Management
 
-| Skill | Description |
-|-------|-------------|
+| Command | Description |
+|---------|-------------|
 | `/commit` | Smart git commit with balanced change grouping |
 | `/create-branch` | Create branches with GitHub issue integration |
 | `/create-issue` | GitHub issue creation with template support |
 | `/create-pull-request` | Automated PR creation with commit analysis |
 | `/update-issue` | Update GitHub issue title, body, labels, or assignees |
 | `/update-docs` | Documentation maintenance for CLAUDE.md and README.md |
-
-### Helper Skills (Auto-discovered)
-
-These are automatically used by Claude Code to support other skills:
-
-- `commit-message-generator` - Generates commit messages from staged changes
-- `branch-name-validator` - Validates branch names following conventions
-- `pr-description-generator` - Generates PR descriptions from commits
-- `project-structure-analyzer` - Detects package managers, build tools, test frameworks
-- `github-integration` - Handles GitHub API interactions
 
 ## Creating New Agents
 
@@ -109,23 +99,23 @@ Detailed instructions for the agent's behavior...
 - **tools**: Comma-separated list of allowed tools
 - **model**: Preferred model (`sonnet`, `opus`, or `haiku`)
 
-## Creating New Skills
+## Creating New Slash Commands
 
-Add a new markdown file in the `skills/` directory:
+Add a new markdown file in the `commands/` directory:
 
 ```markdown
 ---
-description: Skill description (what it does and when to use it)
+description: Command description (what it does and when to use it)
 model: sonnet
 allowed-tools: Bash(npm run *), Read(*), Grep
 ---
 
-Detailed instructions for the skill's behavior...
+Detailed instructions for the command's behavior...
 ```
 
 ### Frontmatter Fields
 
-- **description**: What the skill does and when to use it
+- **description**: What the command does and when to use it
 - **model**: (Optional) Preferred Claude model
 - **allowed-tools**: List of permitted tools with optional patterns
 

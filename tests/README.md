@@ -32,8 +32,8 @@ cd tests
 
 ### `claude`
 Tests Claude Code installation script in isolation:
-- Creates symlinks to `~/.claude/skills/`
-- Verifies all skills are installed
+- Creates symlinks to `~/.claude/commands/`
+- Verifies all commands are installed
 - Checks symlink count
 
 ### `idempotent`
@@ -102,7 +102,7 @@ Tests:
 ./run-tests.sh interactive
 # Then inside container:
 bash scripts/install-claude.sh
-ls -la ~/.claude/skills/
+ls -la ~/.claude/commands/
 exit
 ```
 
