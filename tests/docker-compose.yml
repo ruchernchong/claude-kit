@@ -136,25 +136,25 @@ services:
         echo '' &&
         echo '--- Test 1: First backup (should create .bak files) ---' &&
         echo 'Creating dummy files to be backed up...' &&
-        echo 'custom command 1' > ~/.claude/commands/build.md &&
-        echo 'custom command 2' > ~/.claude/commands/test.md &&
+        echo 'custom command 1' > ~/.claude/commands/commit.md &&
+        echo 'custom command 2' > ~/.claude/commands/new-branch.md &&
         echo '' &&
         echo 'Running Claude Code installer...' &&
         output=$$(bash scripts/install-claude.sh 2>&1) &&
         echo '' &&
-        if [ -f ~/.claude/commands/build.md.bak ]; then
-          echo '✓ First backup created: build.md.bak'
+        if [ -f ~/.claude/commands/commit.md.bak ]; then
+          echo '✓ First backup created: commit.md.bak'
         else
-          echo '✗ First backup NOT created: build.md.bak'
+          echo '✗ First backup NOT created: commit.md.bak'
           exit 1
         fi &&
-        if [ -f ~/.claude/commands/test.md.bak ]; then
-          echo '✓ First backup created: test.md.bak'
+        if [ -f ~/.claude/commands/new-branch.md.bak ]; then
+          echo '✓ First backup created: new-branch.md.bak'
         else
-          echo '✗ First backup NOT created: test.md.bak'
+          echo '✗ First backup NOT created: new-branch.md.bak'
           exit 1
         fi &&
-        if grep -q 'custom command 1' ~/.claude/commands/build.md.bak; then
+        if grep -q 'custom command 1' ~/.claude/commands/commit.md.bak; then
           echo '✓ Backup contains original content'
         else
           echo '✗ Backup does NOT contain original content'
@@ -169,21 +169,21 @@ services:
         echo '' &&
         echo '--- Test 2: Second backup (should create timestamped .bak files) ---' &&
         echo 'Creating new dummy files...' &&
-        rm ~/.claude/commands/build.md &&
-        echo 'custom command UPDATED' > ~/.claude/commands/build.md &&
+        rm ~/.claude/commands/commit.md &&
+        echo 'custom command UPDATED' > ~/.claude/commands/commit.md &&
         sleep 1 &&
         echo '' &&
         echo 'Running installer again...' &&
         bash scripts/install-claude.sh >/dev/null 2>&1 &&
         echo '' &&
-        bak_count=$$(ls ~/.claude/commands/build.md.bak* 2>/dev/null | wc -l) &&
+        bak_count=$$(ls ~/.claude/commands/commit.md.bak* 2>/dev/null | wc -l) &&
         if [ \"$$bak_count\" -ge 2 ]; then
           echo \"✓ Multiple backups exist ($$bak_count files)\"
         else
           echo \"✗ Second backup NOT created (only $$bak_count file)\"
           exit 1
         fi &&
-        timestamped_backup=$$(ls ~/.claude/commands/build.md.bak.* 2>/dev/null | head -1) &&
+        timestamped_backup=$$(ls ~/.claude/commands/commit.md.bak.* 2>/dev/null | head -1) &&
         if [ -n \"$$timestamped_backup\" ]; then
           echo \"✓ Timestamped backup created: $$(basename \"$$timestamped_backup\")\"
         else
@@ -193,7 +193,7 @@ services:
         echo '' &&
         echo '--- Test 3: Symlinks should NOT be backed up ---' &&
         bash scripts/install-claude.sh >/dev/null 2>&1 &&
-        bak_count=$$(ls ~/.claude/commands/build.md.bak* 2>/dev/null | wc -l) &&
+        bak_count=$$(ls ~/.claude/commands/commit.md.bak* 2>/dev/null | wc -l) &&
         if [ \"$$bak_count\" -ge 2 ]; then
           echo '✓ Previous backups preserved'
         else
@@ -202,7 +202,7 @@ services:
         fi &&
         echo 'Running installer again (symlink should not be backed up)...' &&
         output2=$$(bash scripts/install-claude.sh 2>&1) &&
-        bak_count=$$(ls ~/.claude/commands/build.md.bak* 2>/dev/null | wc -l) &&
+        bak_count=$$(ls ~/.claude/commands/commit.md.bak* 2>/dev/null | wc -l) &&
         if [ \"$$bak_count\" -ge 2 ]; then
           echo '✓ Symlink NOT backed up (backup count stable)'
         else
