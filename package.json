@@ -4,7 +4,7 @@
   "description": "",
   "type": "module",
   "scripts": {
-    "setup": "tsx src/setup.ts",
+    "init": "tsx src/setup.ts",
     "install-commands": "tsx src/install-commands.ts",
     "test:docker": "tsx src/test-runner.ts",
     "test": "echo \"Error: no test specified\" && exit 1",

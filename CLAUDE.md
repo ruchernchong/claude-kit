@@ -22,7 +22,7 @@ pnpm biome check .          # Check for issues
 pnpm biome check . --write  # Fix issues automatically
 
 # Setup and installation
-pnpm setup                  # Interactive setup - creates symlinks in ~/.claude/ and ~/.mcp.json
+pnpm init                   # Interactive setup - creates symlinks in ~/.claude/ and ~/.mcp.json
 pnpm install-commands       # Interactive command installer - select which commands to install
 
 # Run tests
@@ -53,7 +53,7 @@ pnpm test:docker            # Interactive test runner with Docker
 │   └── helpers.sh
 ├── .mcp.json          # MCP server configuration (symlinked to $HOME/.mcp.json)
 ├── tsconfig.json      # TypeScript configuration
-└── setup.sh           # Legacy setup script (use 'pnpm setup' instead)
+└── setup.sh           # Legacy setup script (use 'pnpm init' instead)
 ```
 
 ### Agent Definition Format
