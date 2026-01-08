@@ -21,7 +21,7 @@ const DIRECTORY_SYMLINKS = ["agents", "commands", "skills"];
 const FILE_SYMLINKS = [".mcp.json"];
 
 async function main() {
-  intro("Claude Code Powertools Setup");
+  intro("Claude Kit Setup");
 
   const userConfirmedSetup = await confirm({
     message: "This will create symlinks in ~/.claude/ and ~/. Continue?",

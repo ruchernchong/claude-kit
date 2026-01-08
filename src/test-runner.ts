@@ -133,7 +133,7 @@ async function runAllTests(composeCommand: string): Promise<void> {
 }
 
 async function main() {
-  intro("Claude Code Powertools - Test Suite");
+  intro("Claude Kit - Test Suite");
 
   // Check Docker is installed
   if (!checkDockerInstalled()) {
