@@ -97,6 +97,76 @@ import { Tooltip, Button } from '@heroui/react';
 </DateField>
 ```
 
+## Critical Spacing Rules
+
+### 1. Use 8px Grid System
+
+**Rule**: All spacing values must be multiples of 8px.
+
+```tsx
+// GOOD - multiples of 8px
+<div className="p-2">    // 8px  ✓
+<div className="p-4">    // 16px ✓
+<div className="gap-6">  // 24px ✓
+<div className="gap-8">  // 32px ✓
+
+// BAD - not multiples of 8px
+<div className="p-1">    // 4px  ✗
+<div className="p-3">    // 12px ✗
+<div className="gap-5">  // 20px ✗
+<div className="p-[13px]"> // arbitrary ✗
+```
+
+8px grid scale (Tailwind classes):
+- `2` = 8px, `4` = 16px, `6` = 24px, `8` = 32px
+- `10` = 40px, `12` = 48px, `14` = 56px, `16` = 64px
+- `20` = 80px, `24` = 96px, `32` = 128px
+
+**Why 8px**: Industry standard (Material Design), creates consistent visual rhythm, easier to maintain.
+
+### 2. Prefer Gap Over Margin
+
+**Rule**: Use `gap` on flex/grid parents instead of margin on children.
+
+```tsx
+// BAD - margin on children
+<div className="flex flex-col">
+  <div className="mb-4">Item 1</div>
+  <div className="mb-4">Item 2</div>
+  <div>Item 3</div>
+</div>
+
+// GOOD - gap on parent
+<div className="flex flex-col gap-4">
+  <div>Item 1</div>
+  <div>Item 2</div>
+  <div>Item 3</div>
+</div>
+```
+
+**Why gap is better:**
+- No need to handle last-child edge case
+- Cleaner markup - children don't need spacing classes
+- Easier to change spacing in one place
+- Works consistently with dynamic content
+
+### 3. Spacing Direction: Bottom Only
+
+**Rule**: When margin/padding is needed, prefer bottom over top.
+
+```tsx
+// BAD - top spacing creates context dependency
+<div className="mt-4 pt-4">
+
+// GOOD - bottom spacing for self-contained components
+<div className="mb-4 pb-4">
+```
+
+**Why bottom is better:**
+- Components are self-contained (push content below)
+- No first-child spacing issues
+- Easier to reason about document flow
+
 ## Consistency Guidelines
 
 ### Color Usage
@@ -105,7 +175,9 @@ import { Tooltip, Button } from '@heroui/react';
 - Border colors: `border-border/60` for subtle borders
 
 ### Spacing
-- Use Tailwind scale: `p-4`, `gap-2`, `mt-6`
+- Follow 8px grid: use `2`, `4`, `6`, `8`, `10`, `12`... (not `1`, `3`, `5`)
+- Prefer `gap` over margin for flex/grid layouts
+- Use bottom spacing over top when margin is needed
 - Custom spacing via `@theme` for design-specific values
 
 ### Typography
