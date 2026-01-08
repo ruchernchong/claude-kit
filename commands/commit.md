@@ -1,7 +1,33 @@
 ---
 description: Smart git commit with short, concise messages
 model: sonnet
-allowed-tools: Bash(git status), Bash(git add), Bash(git diff), Bash(git commit), Bash(git log), Bash(git pull)
+allowed-tools: Bash(git status), Bash(git add), Bash(git diff), Bash(git commit), Bash(git log), Bash(git pull), Bash(gitleaks), Read, Edit, Glob
+---
+
+## Pre-Commit Security Check
+
+Before committing, ensure GitLeaks is configured in the project:
+
+1. **Check for Husky setup**: Look for `.husky/pre-commit`
+2. **Verify GitLeaks integration**: Check if `gitleaks protect` is in the pre-commit hook
+3. **Auto-configure if missing**:
+   - If `.husky/` exists but GitLeaks is missing, add `gitleaks protect --staged --verbose` before any `lint-staged` command
+   - If `.husky/` doesn't exist, run `npx husky init` first, then configure GitLeaks
+
+Example `.husky/pre-commit` with GitLeaks:
+```bash
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Secrets detection - fail fast if secrets found
+gitleaks protect --staged --verbose
+
+# Lint staged files (if present)
+npx lint-staged
+```
+
+Only proceed with the commit after confirming GitLeaks is properly configured.
+
 ---
 
 ## Language Conventions
