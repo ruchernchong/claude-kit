@@ -1,16 +1,13 @@
-# Node.js Alpine - minimal Docker image with Node.js
-# Used for testing TypeScript CLI tools
+# Alpine Linux - minimal Docker image (~5MB)
+# Perfect for testing bash scripts and installations
 
-FROM node:22-alpine
+FROM alpine:3.19
 
-# Install essential packages
+# Install only essential packages
 RUN apk add --no-cache \
     bash \
     git \
     coreutils
-
-# Install pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
 
 # Create a test user (simulates real user environment)
 RUN adduser -D -s /bin/bash testuser
@@ -25,8 +22,5 @@ COPY --chown=testuser:testuser . /home/testuser/claude-kit
 # Set working directory to the repository
 WORKDIR /home/testuser/claude-kit
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile
-
 # Default command shows help
-CMD ["bash", "-c", "echo 'Test environment ready. Run: pnpm install-commands --ci' && bash"]
+CMD ["bash", "-c", "echo 'Test environment ready. Run: bash scripts/install-claude.sh' && bash"]

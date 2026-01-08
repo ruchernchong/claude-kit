@@ -12,7 +12,7 @@ services:
         cd /home/testuser/claude-kit &&
         echo '=== Testing Claude Code Installation ===' &&
         echo '' &&
-        pnpm install-commands --ci &&
+        bash scripts/install-claude.sh &&
         echo '' &&
         echo '=== Verification ===' &&
         echo 'Commands installed:' &&
@@ -37,11 +37,11 @@ services:
         echo '=== Testing Idempotency ===' &&
         echo '' &&
         echo 'First run:' &&
-        pnpm install-commands --ci >/dev/null 2>&1
+        bash scripts/install-claude.sh >/dev/null 2>&1
         echo 'First install completed' &&
         echo '' &&
         echo 'Second run (should skip all):' &&
-        pnpm install-commands --ci >/dev/null 2>&1
+        bash scripts/install-claude.sh >/dev/null 2>&1
         echo 'Second install completed' &&
         echo '' &&
         echo '=== Verification ===' &&
@@ -62,23 +62,23 @@ services:
         cd /home/testuser/claude-kit &&
         echo '=== Testing Symlink Integrity ===' &&
         echo '' &&
-        pnpm install-commands --ci > /dev/null 2>&1
+        bash scripts/install-claude.sh > /dev/null 2>&1
         echo 'Checking all symlinks point to valid files...' &&
         echo '' &&
         all_valid=true
         for file in ~/.claude/commands/*.md; do
-          if [ -L \"\$$file\" ]; then
-            target=\$$(readlink \"\$$file\")
-            if [ -f \"\$$target\" ]; then
-              echo \"✓ \$$(basename \"\$$file\") -> \$$target\"
+          if [ -L \"$$file\" ]; then
+            target=$$(readlink \"$$file\")
+            if [ -f \"$$target\" ]; then
+              echo \"✓ $$(basename \"$$file\") -> $$target\"
             else
-              echo \"✗ \$$(basename \"\$$file\") -> \$$target (BROKEN)\"
+              echo \"✗ $$(basename \"$$file\") -> $$target (BROKEN)\"
               all_valid=false
             fi
           fi
         done
         echo ''
-        if [ \"\$$all_valid\" = true ]; then
+        if [ \"$$all_valid\" = true ]; then
           echo '✅ All symlinks are valid'
           exit 0
         else
@@ -101,14 +101,14 @@ services:
         echo '=== Testing Warning Messages ===' &&
         echo '' &&
         echo 'Testing installer warning...' &&
-        output=\$$(pnpm install-commands --ci 2>&1) &&
-        if echo \"\$$output\" | grep -q 'WARNING: Existing commands'; then
+        output=$$(bash scripts/install-claude.sh 2>&1) &&
+        if echo \"$$output\" | grep -q 'WARNING: Existing commands'; then
           echo '✓ Installer shows warning'
         else
           echo '✗ Installer missing warning'
           exit 1
         fi &&
-        if echo \"\$$output\" | grep -q 'Backups will be saved'; then
+        if echo \"$$output\" | grep -q 'We will attempt to backup'; then
           echo '✓ Installer mentions backup'
         else
           echo '✗ Installer missing backup message'
@@ -140,7 +140,7 @@ services:
         echo 'custom command 2' > ~/.claude/commands/new-branch.md &&
         echo '' &&
         echo 'Running installer...' &&
-        output=\$$(pnpm install-commands --ci 2>&1) &&
+        output=$$(bash scripts/install-claude.sh 2>&1) &&
         echo '' &&
         if [ -f ~/.claude/commands/commit.md.bak ]; then
           echo '✓ First backup created: commit.md.bak'
@@ -168,39 +168,39 @@ services:
         sleep 1 &&
         echo '' &&
         echo 'Running installer again...' &&
-        pnpm install-commands --ci >/dev/null 2>&1 &&
+        bash scripts/install-claude.sh >/dev/null 2>&1 &&
         echo '' &&
-        bak_count=\$$(ls ~/.claude/commands/commit.md.bak* 2>/dev/null | wc -l) &&
-        if [ \"\$$bak_count\" -ge 2 ]; then
-          echo \"✓ Multiple backups exist (\$$bak_count files)\"
+        bak_count=$$(ls ~/.claude/commands/commit.md.bak* 2>/dev/null | wc -l) &&
+        if [ \"$$bak_count\" -ge 2 ]; then
+          echo \"✓ Multiple backups exist ($$bak_count files)\"
         else
-          echo \"✗ Second backup NOT created (only \$$bak_count file)\"
+          echo \"✗ Second backup NOT created (only $$bak_count file)\"
           exit 1
         fi &&
-        timestamped_backup=\$$(ls ~/.claude/commands/commit.md.bak.* 2>/dev/null | head -1) &&
-        if [ -n \"\$$timestamped_backup\" ]; then
-          echo \"✓ Timestamped backup created: \$$(basename \"\$$timestamped_backup\")\"
+        timestamped_backup=$$(ls ~/.claude/commands/commit.md.bak.* 2>/dev/null | head -1) &&
+        if [ -n \"$$timestamped_backup\" ]; then
+          echo \"✓ Timestamped backup created: $$(basename \"$$timestamped_backup\")\"
         else
           echo '✗ No timestamped backup found'
           exit 1
         fi &&
         echo '' &&
         echo '--- Test 3: Symlinks should NOT be backed up ---' &&
-        pnpm install-commands --ci >/dev/null 2>&1 &&
-        bak_count=\$$(ls ~/.claude/commands/commit.md.bak* 2>/dev/null | wc -l) &&
-        if [ \"\$$bak_count\" -ge 2 ]; then
+        bash scripts/install-claude.sh >/dev/null 2>&1 &&
+        bak_count=$$(ls ~/.claude/commands/commit.md.bak* 2>/dev/null | wc -l) &&
+        if [ \"$$bak_count\" -ge 2 ]; then
           echo '✓ Previous backups preserved'
         else
-          echo \"✗ Unexpected backup count (got \$$bak_count)\"
+          echo \"✗ Unexpected backup count (got $$bak_count)\"
           exit 1
         fi &&
         echo 'Running installer again (symlink should not be backed up)...' &&
-        output2=\$$(pnpm install-commands --ci 2>&1) &&
-        bak_count=\$$(ls ~/.claude/commands/commit.md.bak* 2>/dev/null | wc -l) &&
-        if [ \"\$$bak_count\" -ge 2 ]; then
+        output2=$$(bash scripts/install-claude.sh 2>&1) &&
+        bak_count=$$(ls ~/.claude/commands/commit.md.bak* 2>/dev/null | wc -l) &&
+        if [ \"$$bak_count\" -ge 2 ]; then
           echo '✓ Symlink NOT backed up (backup count stable)'
         else
-          echo \"✗ Unexpected backup behavior (got \$$bak_count)\"
+          echo \"✗ Unexpected backup behavior (got $$bak_count)\"
           exit 1
         fi &&
         echo '' &&

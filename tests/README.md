@@ -1,6 +1,6 @@
 # Testing Guide
 
-Safe, isolated testing environment for Claude Code Powertools using Docker.
+Safe, isolated testing environment for Claude Kit using Docker.
 
 ## Overview
 
@@ -10,17 +10,22 @@ This test suite uses **Alpine Linux** (minimal ~5MB image) in Docker containers 
 
 - Docker installed and running
 - Docker Compose (v2 or standalone)
-- Node.js and pnpm (for the interactive test runner)
 
 ## Quick Start
 
 ```bash
-# Run interactive test runner (from project root)
-pnpm test:docker
-
-# Or use docker-compose directly
+# Run all tests
 cd tests
-docker compose run --rm claude
+./run-tests.sh
+
+# Run specific test
+./run-tests.sh claude      # Test Claude Code installation only
+
+# Rebuild and run tests
+./run-tests.sh --build all
+
+# Interactive testing
+./run-tests.sh interactive
 ```
 
 ## Available Tests
@@ -47,7 +52,6 @@ Tests symlink integrity:
 Tests warning messages in the installer:
 - Verifies installer shows overwrite warning
 - Checks backup functionality is mentioned
-- Validates cancellation functionality
 
 ### `backup`
 Tests automatic backup functionality:
@@ -55,7 +59,6 @@ Tests automatic backup functionality:
 - Verifies .bak files are created on first backup
 - Tests timestamped backups on subsequent runs
 - Confirms symlinks are NOT backed up
-- Validates backup counter in installation summary
 - Checks original content is preserved in backups
 
 ### `interactive`
@@ -65,20 +68,47 @@ Starts an interactive bash session:
 - Inspect results with standard commands
 - Type `exit` to leave
 
-## Using the Interactive Test Runner
+## Test Runner Options
 
-The TypeScript test runner (`pnpm test:docker`) provides:
-- Interactive test selection menu
-- Option to rebuild Docker image
-- Progress spinners and colored output
+```bash
+./run-tests.sh [OPTIONS] [TEST]
+
+Options:
+  --build          Build Docker image before running tests
+  --help, -h       Show help message
+
+Tests:
+  all              Run all tests (default)
+  claude           Test Claude Code installation
+  idempotent       Test idempotency
+  symlinks         Test symlink integrity
+  warnings         Test warning messages
+  backup           Test backup functionality
+  interactive      Start interactive environment
+```
+
+## Examples
+
+```bash
+# Run all tests with fresh build
+./run-tests.sh --build all
+
+# Test only Claude Code installation
+./run-tests.sh claude
+
+# Manual testing in interactive mode
+./run-tests.sh interactive
+# Then inside container:
+bash scripts/install-claude.sh
+ls -la ~/.claude/commands/
+exit
+```
 
 ## Docker Compose Services
 
 You can also run tests directly with docker-compose:
 
 ```bash
-cd tests
-
 # Run specific service
 docker compose run --rm claude
 
@@ -97,7 +127,7 @@ Each test runs in a fresh Alpine Linux container with:
 - `git` - Version control (if needed)
 - `coreutils` - Standard Unix utilities
 - Test user (`testuser`) - Non-root user simulation
-- Repository mounted at `/home/testuser/claude-powertools`
+- Repository mounted at `/home/testuser/claude-kit`
 
 ## Why Alpine Linux?
 
@@ -112,7 +142,7 @@ Docker automatically removes containers after tests (`--rm` flag).
 
 To remove the test image:
 ```bash
-docker rmi powertools-test-alpine
+docker rmi claude-kit-test-alpine
 ```
 
 To clean all Docker resources:
@@ -128,17 +158,19 @@ docker system prune -a
 # https://www.docker.com/get-started
 ```
 
+### Permission denied
+```bash
+# Make test runner executable
+chmod +x run-tests.sh
+```
+
 ### Tests failing
 ```bash
-# Rebuild Docker image via interactive runner
-pnpm test:docker
-# Select "Yes" when asked to rebuild
-
-# Or rebuild manually
-cd tests && docker compose build
+# Rebuild Docker image
+./run-tests.sh --build all
 
 # Run interactive mode to debug
-docker compose run --rm interactive
+./run-tests.sh interactive
 ```
 
 ## CI/CD Integration
@@ -153,23 +185,18 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Run tests
         run: |
           cd tests
-          docker compose build
-          docker compose run --rm claude
-          docker compose run --rm idempotent
-          docker compose run --rm symlinks
-          docker compose run --rm warnings
-          docker compose run --rm backup
+          ./run-tests.sh --build all
 ```
 
 ## Development Workflow
 
 1. **Make changes** to installation scripts
-2. **Run tests** with `pnpm test:docker`
-3. **Debug** with interactive mode if needed
+2. **Run tests** with `./run-tests.sh`
+3. **Debug** with `./run-tests.sh interactive` if needed
 4. **Commit** when all tests pass
 
 ## Notes

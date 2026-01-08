@@ -1,6 +1,10 @@
 # Ignore files that don't need to be in Docker build context
+node_modules
+coverage
 .git
 .github
-node_modules
+.husky
+.idea
 .DS_Store
 *.log
+*.tsbuildinfo
