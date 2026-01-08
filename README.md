@@ -11,6 +11,8 @@
   <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/Node.js-24-green?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js"></a>
 </p>
 
+![Install Commands](assets/install-commands.png)
+
 ## Setup
 
 1. Install dependencies:
