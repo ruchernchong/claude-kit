@@ -43,17 +43,15 @@ pnpm test:docker            # Interactive test runner with Docker
 │   ├── install-commands.ts    # Interactive command installer
 │   ├── test-runner.ts         # Interactive test runner
 │   └── utils.ts               # Shared utilities (symlinks, file ops)
-├── scripts/           # Legacy installation scripts (deprecated)
+├── scripts/           # Shell scripts used by Docker tests
 │   └── install-claude.sh
 ├── tests/             # Docker-based test infrastructure
 │   ├── Dockerfile
-│   ├── docker-compose.yml
-│   └── run-tests.sh
-├── lib/               # Legacy shell utilities (deprecated)
+│   └── docker-compose.yml
+├── lib/               # Shell utilities used by Docker tests
 │   └── helpers.sh
 ├── .mcp.json          # MCP server configuration (symlinked to $HOME/.mcp.json)
-├── tsconfig.json      # TypeScript configuration
-└── setup.sh           # Legacy setup script (use 'pnpm init' instead)
+└── tsconfig.json      # TypeScript configuration
 ```
 
 ### Agent Definition Format

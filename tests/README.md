@@ -10,22 +10,17 @@ This test suite uses **Alpine Linux** (minimal ~5MB image) in Docker containers 
 
 - Docker installed and running
 - Docker Compose (v2 or standalone)
+- Node.js and pnpm (for the interactive test runner)
 
 ## Quick Start
 
 ```bash
-# Run all tests
+# Run interactive test runner (from project root)
+pnpm test:docker
+
+# Or use docker-compose directly
 cd tests
-./run-tests.sh
-
-# Run specific test
-./run-tests.sh claude      # Test Claude Code installation only
-
-# Rebuild and run tests
-./run-tests.sh --build all
-
-# Interactive testing
-./run-tests.sh interactive
+docker compose run --rm claude
 ```
 
 ## Available Tests
@@ -70,56 +65,29 @@ Starts an interactive bash session:
 - Inspect results with standard commands
 - Type `exit` to leave
 
-## Test Runner Options
+## Using the Interactive Test Runner
 
-```bash
-./run-tests.sh [OPTIONS] [TEST]
-
-Options:
-  --build          Build Docker image before running tests
-  --help, -h       Show help message
-
-Tests:
-  all              Run all tests (default)
-  claude           Test Claude Code installation only
-  idempotent       Test idempotency
-  symlinks         Test symlink integrity
-  warnings         Test warning messages
-  backup           Test backup functionality
-  interactive      Start interactive environment
-```
-
-## Examples
-
-```bash
-# Run all tests with fresh build
-./run-tests.sh --build all
-
-# Test only Claude Code installation
-./run-tests.sh claude
-
-# Manual testing in interactive mode
-./run-tests.sh interactive
-# Then inside container:
-bash scripts/install-claude.sh
-ls -la ~/.claude/commands/
-exit
-```
+The TypeScript test runner (`pnpm test:docker`) provides:
+- Interactive test selection menu
+- Option to rebuild Docker image
+- Progress spinners and colored output
 
 ## Docker Compose Services
 
 You can also run tests directly with docker-compose:
 
 ```bash
+cd tests
+
 # Run specific service
-docker-compose run --rm claude
+docker compose run --rm claude
 
 # Build and run
-docker-compose build
-docker-compose run --rm symlinks
+docker compose build
+docker compose run --rm symlinks
 
 # Interactive mode
-docker-compose run --rm interactive
+docker compose run --rm interactive
 ```
 
 ## Test Environment
@@ -160,19 +128,17 @@ docker system prune -a
 # https://www.docker.com/get-started
 ```
 
-### Permission denied
-```bash
-# Make test runner executable
-chmod +x run-tests.sh
-```
-
 ### Tests failing
 ```bash
-# Rebuild Docker image
-./run-tests.sh --build all
+# Rebuild Docker image via interactive runner
+pnpm test:docker
+# Select "Yes" when asked to rebuild
+
+# Or rebuild manually
+cd tests && docker compose build
 
 # Run interactive mode to debug
-./run-tests.sh interactive
+docker compose run --rm interactive
 ```
 
 ## CI/CD Integration
@@ -191,14 +157,19 @@ jobs:
       - name: Run tests
         run: |
           cd tests
-          ./run-tests.sh --build all
+          docker compose build
+          docker compose run --rm claude
+          docker compose run --rm idempotent
+          docker compose run --rm symlinks
+          docker compose run --rm warnings
+          docker compose run --rm backup
 ```
 
 ## Development Workflow
 
 1. **Make changes** to installation scripts
-2. **Run tests** with `./run-tests.sh`
-3. **Debug** with `./run-tests.sh interactive` if needed
+2. **Run tests** with `pnpm test:docker`
+3. **Debug** with interactive mode if needed
 4. **Commit** when all tests pass
 
 ## Notes
