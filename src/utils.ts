@@ -418,3 +418,74 @@ export async function checkFileConflict(
 
   return null;
 }
+
+export interface BackupInfo {
+  backupPath: string;
+  originalPath: string;
+  name: string;
+}
+
+/**
+ * Find all .bak files in a directory
+ */
+export async function findBackups(directory: string): Promise<BackupInfo[]> {
+  const backups: BackupInfo[] = [];
+
+  try {
+    const files = await fs.readdir(directory);
+    for (const file of files) {
+      if (file.includes(".bak")) {
+        const backupPath = path.join(directory, file);
+        // Extract original name (remove .bak and any timestamp suffix)
+        const originalName = file.replace(
+          /\.bak(\.\d{4}-\d{2}-\d{2}T.*)?$/,
+          "",
+        );
+        const originalPath = path.join(directory, originalName);
+        backups.push({
+          backupPath,
+          originalPath,
+          name: originalName,
+        });
+      }
+    }
+  } catch {
+    // Directory doesn't exist or can't be read
+  }
+
+  return backups;
+}
+
+/**
+ * Restore a file from its backup
+ */
+export async function restoreFromBackup(
+  backup: BackupInfo,
+): Promise<SymlinkResult> {
+  const { backupPath, originalPath, name } = backup;
+
+  try {
+    // Remove existing file/symlink at original path
+    if (await isSymlink(originalPath)) {
+      await fs.unlink(originalPath);
+    } else if (await exists(originalPath)) {
+      await fs.unlink(originalPath);
+    }
+
+    // Move backup to original location
+    await fs.rename(backupPath, originalPath);
+
+    return {
+      name,
+      status: "installed",
+      message: `restored from ${path.basename(backupPath)}`,
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "unknown error";
+    return {
+      name,
+      status: "failed",
+      message: `failed to restore: ${message}`,
+    };
+  }
+}

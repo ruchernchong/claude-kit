@@ -5,20 +5,25 @@ import {
   intro,
   isCancel,
   log,
+  multiselect,
   outro,
+  select,
   spinner,
 } from "@clack/prompts";
 import {
+  type BackupInfo,
   CLAUDE_DIR,
   type ConflictInfo,
   checkDirectoryConflict,
   checkFileConflict,
   createDirectorySymlink,
   createFileSymlink,
+  findBackups,
   HOME_DIR,
   logResult,
   printSummary,
   ROOT_DIR,
+  restoreFromBackup,
   type SymlinkResult,
 } from "./utils.js";
 
@@ -82,9 +87,7 @@ function describeAction(conflict: ConflictInfo): string {
   return "Will backup file and create symlink";
 }
 
-async function main() {
-  intro("Claude Kit Setup");
-
+async function runSetup() {
   const loadingSpinner = spinner();
   loadingSpinner.start("Checking for conflicts");
 
@@ -182,6 +185,117 @@ async function main() {
   }
 
   outro("Setup complete!");
+}
+
+async function runRestore() {
+  const loadingSpinner = spinner();
+  loadingSpinner.start("Searching for backups");
+
+  // Search for backups in both directories
+  const claudeDirBackups = await findBackups(CLAUDE_DIR);
+  const homeDirBackups = await findBackups(HOME_DIR);
+  const allBackups = [...claudeDirBackups, ...homeDirBackups];
+
+  loadingSpinner.stop("Backup search complete");
+
+  if (allBackups.length === 0) {
+    log.info("No backup files found.");
+    outro("Nothing to restore");
+    return;
+  }
+
+  log.info(`Found ${allBackups.length} backup(s):`);
+  console.log();
+
+  const backupOptions = allBackups.map((backup) => ({
+    value: backup,
+    label: path.basename(backup.backupPath),
+    hint: `restores to ${backup.originalPath}`,
+  }));
+
+  const selectedBackups = await multiselect({
+    message: "Select backups to restore:",
+    options: backupOptions,
+    required: false,
+  });
+
+  if (isCancel(selectedBackups)) {
+    cancel("Restore cancelled");
+    process.exit(0);
+  }
+
+  if (!selectedBackups || selectedBackups.length === 0) {
+    log.info("No backups selected.");
+    outro("Nothing to restore");
+    return;
+  }
+
+  const userConfirmed = await confirm({
+    message: `Restore ${selectedBackups.length} backup(s)? This will replace current files/symlinks.`,
+  });
+
+  if (isCancel(userConfirmed) || !userConfirmed) {
+    cancel("Restore cancelled");
+    process.exit(0);
+  }
+
+  loadingSpinner.start("Restoring backups");
+
+  const results: SymlinkResult[] = [];
+  for (const backup of selectedBackups as BackupInfo[]) {
+    const result = await restoreFromBackup(backup);
+    results.push(result);
+  }
+
+  loadingSpinner.stop("Restore complete");
+
+  for (const result of results) {
+    logResult(result);
+  }
+
+  printSummary(results);
+
+  const failedCount = results.filter(
+    (result) => result.status === "failed",
+  ).length;
+
+  if (failedCount > 0) {
+    outro(`Restore completed with ${failedCount} error(s)`);
+    process.exit(1);
+  }
+
+  outro("Restore complete!");
+}
+
+async function main() {
+  intro("Claude Kit Setup");
+
+  const action = await select({
+    message: "What would you like to do?",
+    options: [
+      {
+        value: "setup",
+        label: "Setup",
+        hint: "Create symlinks for agents, commands, skills, and config",
+      },
+      {
+        value: "restore",
+        label: "Restore backups",
+        hint: "Restore previously backed up files",
+      },
+    ],
+  });
+
+  if (isCancel(action)) {
+    cancel("Cancelled");
+    process.exit(0);
+  }
+
+  if (action === "setup") {
+    await runSetup();
+  } else if (action === "restore") {
+    await runRestore();
+  }
 }
 
 main().catch(console.error);
