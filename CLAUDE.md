@@ -35,7 +35,7 @@ cd tests && ./run-tests.sh
 ```
 .
 ├── agents/            # Specialized agent definitions (27 agents)
-├── commands/          # Slash command definitions (16 commands)
+├── commands/          # Slash command definitions (6 commands)
 ├── skills/            # Skills with multiple commands (security)
 ├── scripts/           # Installation scripts
 │   └── install-claude.sh
@@ -95,25 +95,12 @@ allowed-tools: List of permitted tools
 
 Invoke with `/command-name`:
 
-- `/build` - Intelligent build detection and execution
-- `/test` - Smart test runner (Jest, Vitest, Mocha, etc.)
-- `/lint` - JavaScript/TypeScript linting and formatting
-- `/setup` - Automated dependency installation
-- `/clean` - Safe cleanup of build artifacts
-- `/commit` - Smart git commit with balanced change grouping
+- `/commit` - Smart git commit with GitLeaks security check and concise messages
 - `/create-branch` - Create branches with GitHub issue integration
 - `/create-issue` - GitHub issue creation with template support
 - `/create-pull-request` - Automated PR creation with commit analysis
 - `/update-issue` - Update GitHub issue title, body, labels, or assignees
 - `/update-docs` - Documentation maintenance
-
-### Smart Detection System
-
-Commands automatically detect and adapt to:
-- **Package Managers**: pnpm > bun > yarn > npm (based on lock files)
-- **Build Tools**: Webpack, Vite, Rollup, Parcel, Next.js, Nuxt
-- **Testing**: Jest, Vitest, Mocha, Cypress, Playwright
-- **Linting**: ESLint, Prettier
 
 ## Conventions
 
