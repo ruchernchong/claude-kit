@@ -1,57 +1,73 @@
-#!/bin/bash
-# setup.sh - Creates a symlink to make agent definitions available to Claude Code
+#!/usr/bin/env zsh
+# setup.sh - Creates symlinks to make agents, commands, and skills available to Claude Code
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SOURCE_DIR="$SCRIPT_DIR/agents"
-TARGET_DIR="$HOME/.claude/agents"
+SCRIPT_DIR="${0:A:h}"
 
-# Verify source directory exists
-if [ ! -d "$SOURCE_DIR" ]; then
-  echo "Error: Source directory does not exist: $SOURCE_DIR"
-  exit 1
-fi
+setup_symlink() {
+  local name="$1"
+  local source_dir="$SCRIPT_DIR/$name"
+  local target_dir="$HOME/.claude/$name"
 
-# Check if symlink already exists
-if [ -L "$TARGET_DIR" ]; then
-  EXISTING_TARGET="$(readlink "$TARGET_DIR")"
-  if [ "$EXISTING_TARGET" = "$SOURCE_DIR" ]; then
-    echo "Symlink already correctly configured: $TARGET_DIR -> $SOURCE_DIR"
-    exit 0
-  else
-    echo "Warning: Symlink exists but points to: $EXISTING_TARGET"
-    echo "Expected: $SOURCE_DIR"
-    exit 1
+  # Verify source directory exists
+  if [ ! -d "$source_dir" ]; then
+    echo "Skipping $name: source directory does not exist"
+    return 0
   fi
-fi
 
-# Ensure parent directory exists
-PARENT_DIR="$(dirname "$TARGET_DIR")"
-if [ ! -d "$PARENT_DIR" ]; then
-  echo "Error: Parent directory does not exist: $PARENT_DIR"
-  echo "Create it with: mkdir -p $PARENT_DIR"
-  exit 1
-fi
+  # Check if symlink already exists
+  if [ -L "$target_dir" ]; then
+    existing_target="$(readlink "$target_dir")"
+    if [ "$existing_target" = "$source_dir" ]; then
+      echo "✓ $name: already configured"
+      return 0
+    else
+      echo "✗ $name: symlink exists but points to: $existing_target"
+      return 1
+    fi
+  fi
 
-# Handle existing directory
-if [ -d "$TARGET_DIR" ]; then
-  rmdir "$TARGET_DIR" 2>/dev/null || {
-    echo "Error: $TARGET_DIR is not empty. Please remove it manually."
-    exit 1
+  # Ensure parent directory exists
+  parent_dir="$(dirname "$target_dir")"
+  if [ ! -d "$parent_dir" ]; then
+    mkdir -p "$parent_dir"
+  fi
+
+  # Handle existing directory
+  if [ -d "$target_dir" ]; then
+    rmdir "$target_dir" 2>/dev/null || {
+      echo "✗ $name: $target_dir is not empty. Please remove it manually."
+      return 1
+    }
+  fi
+
+  # Handle existing file
+  if [ -e "$target_dir" ]; then
+    echo "✗ $name: $target_dir exists but is not a symlink or directory."
+    return 1
+  fi
+
+  # Create symlink
+  ln -s "$source_dir" "$target_dir" || {
+    echo "✗ $name: failed to create symlink"
+    return 1
   }
-fi
 
-# Handle existing file
-if [ -e "$TARGET_DIR" ]; then
-  echo "Error: $TARGET_DIR exists but is not a symlink or directory."
-  echo "Remove it with: rm $TARGET_DIR"
-  exit 1
-fi
-
-# Create symlink
-ln -s "$SOURCE_DIR" "$TARGET_DIR" || {
-  echo "Error: Failed to create symlink"
-  exit 1
+  echo "✓ $name: created symlink -> $source_dir"
 }
 
-echo "Successfully created symlink: $TARGET_DIR -> $SOURCE_DIR"
+echo "Setting up Claude Code symlinks..."
+echo
+
+errors=0
+for name in agents commands skills; do
+  setup_symlink "$name" || ((errors++)) || true
+done
+
+echo
+if [ $errors -eq 0 ]; then
+  echo "Setup complete!"
+else
+  echo "Setup completed with $errors error(s)"
+  exit 1
+fi
