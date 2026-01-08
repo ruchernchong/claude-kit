@@ -96,11 +96,11 @@ allowed-tools: List of permitted tools
 Invoke with `/command-name`:
 
 - `/commit` - Smart git commit with GitLeaks security check and concise messages
-- `/create-branch` - Create branches with GitHub issue integration
-- `/create-issue` - GitHub issue creation with template support
-- `/create-pull-request` - Automated PR creation with commit analysis
+- `/new-branch` - Create branches with GitHub issue integration
+- `/new-issue` - GitHub issue creation with template support
+- `/new-pr` - Automated PR creation with commit analysis
+- `/sync-docs` - Sync documentation with project state
 - `/update-issue` - Update GitHub issue title, body, labels, or assignees
-- `/update-docs` - Documentation maintenance
 
 ## Conventions
 
