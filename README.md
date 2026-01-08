@@ -1,6 +1,6 @@
-# Agents
+# Claude Code Powertools
 
-A collection of specialized agent definitions for [Claude Code](https://claude.ai/code).
+A collection of powertools for [Claude Code](https://claude.ai/code) including specialized agents and user-invocable skills.
 
 ## Setup
 
@@ -9,14 +9,18 @@ A collection of specialized agent definitions for [Claude Code](https://claude.a
    pnpm install
    ```
 
-2. Create the symlink to make agents available to Claude Code:
+2. Create symlinks to make agents and skills available to Claude Code:
    ```bash
    ./setup.sh
    ```
 
-   This creates a symlink from `~/.claude/agents` to the `agents/` directory in this repo.
+   This creates symlinks:
+   - `~/.claude/agents` -> `agents/`
+   - `~/.claude/skills` -> `skills/`
 
 ## Available Agents
+
+Agents are specialized subagents for complex, multi-step tasks. They're invoked via the Task tool.
 
 | Agent | Description |
 |-------|-------------|
@@ -48,9 +52,44 @@ A collection of specialized agent definitions for [Claude Code](https://claude.a
 | security-auditor | Audits code for security vulnerabilities |
 | test-writer | Generates tests for code |
 
+## Available Skills
+
+Skills are user-invocable capabilities. Invoke them with `/skill-name`.
+
+### Core Development
+
+| Skill | Description |
+|-------|-------------|
+| `/build` | Intelligent build detection and execution |
+| `/test` | Smart test runner (Jest, Vitest, Mocha, etc.) |
+| `/lint` | JavaScript/TypeScript linting and formatting |
+| `/setup` | Automated dependency installation |
+| `/clean` | Safe cleanup of build artifacts |
+
+### Git & Project Management
+
+| Skill | Description |
+|-------|-------------|
+| `/commit` | Smart git commit with balanced change grouping |
+| `/create-branch` | Create branches with GitHub issue integration |
+| `/create-issue` | GitHub issue creation with template support |
+| `/create-pull-request` | Automated PR creation with commit analysis |
+| `/update-issue` | Update GitHub issue title, body, labels, or assignees |
+| `/update-docs` | Documentation maintenance for CLAUDE.md and README.md |
+
+### Helper Skills (Auto-discovered)
+
+These are automatically used by Claude Code to support other skills:
+
+- `commit-message-generator` - Generates commit messages from staged changes
+- `branch-name-validator` - Validates branch names following conventions
+- `pr-description-generator` - Generates PR descriptions from commits
+- `project-structure-analyzer` - Detects package managers, build tools, test frameworks
+- `github-integration` - Handles GitHub API interactions
+
 ## Creating New Agents
 
-Add a new markdown file in the `agents/` directory with this format:
+Add a new markdown file in the `agents/` directory:
 
 ```markdown
 ---
@@ -67,8 +106,28 @@ Detailed instructions for the agent's behavior...
 
 - **name**: Unique identifier for the agent
 - **description**: When Claude should use this agent
-- **tools**: Comma-separated list of allowed tools (Read, Grep, Glob, Edit, Write, Bash)
+- **tools**: Comma-separated list of allowed tools
 - **model**: Preferred model (`sonnet`, `opus`, or `haiku`)
+
+## Creating New Skills
+
+Add a new markdown file in the `skills/` directory:
+
+```markdown
+---
+description: Skill description (what it does and when to use it)
+model: sonnet
+allowed-tools: Bash(npm run *), Read(*), Grep
+---
+
+Detailed instructions for the skill's behavior...
+```
+
+### Frontmatter Fields
+
+- **description**: What the skill does and when to use it
+- **model**: (Optional) Preferred Claude model
+- **allowed-tools**: List of permitted tools with optional patterns
 
 ## Development
 
@@ -78,7 +137,18 @@ pnpm biome check .
 
 # Fix linting issues
 pnpm biome check . --write
+
+# Run tests
+cd tests && ./run-tests.sh
 ```
+
+## Updating
+
+```bash
+git pull
+```
+
+The symlinks automatically reflect updates - no reinstallation needed.
 
 ## License
 

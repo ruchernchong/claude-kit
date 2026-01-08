@@ -1,0 +1,330 @@
+services:
+  # Test Claude Code installation only
+  claude:
+    build:
+      context: ..
+      dockerfile: tests/Dockerfile
+    container_name: agentic-claude
+    volumes:
+      - ..:/home/testuser/agentic-slash-commands
+    command: >
+      bash -c "
+        cd /home/testuser/agentic-slash-commands &&
+        echo '=== Testing Claude Code Installation ===' &&
+        echo '' &&
+        bash scripts/install-claude.sh &&
+        echo '' &&
+        echo '=== Verification ===' &&
+        echo 'Skills installed:' &&
+        ls -la ~/.claude/skills/ | grep -E '^l' | wc -l | xargs echo 'Total symlinks:' &&
+        echo '' &&
+        echo 'Sample symlinks:' &&
+        (cd ~/.claude/skills/ && pwd) &&
+        ls -la ~/.claude/skills/ | grep -E '^l' | head -3
+      "
+
+  # Test Codex installation only
+  codex:
+    build:
+      context: ..
+      dockerfile: tests/Dockerfile
+    container_name: agentic-codex
+    volumes:
+      - ..:/home/testuser/agentic-slash-commands
+    command: >
+      bash -c "
+        cd /home/testuser/agentic-slash-commands &&
+        echo '=== Testing Codex Installation ===' &&
+        echo '' &&
+        bash scripts/install-codex.sh &&
+        echo '' &&
+        echo '=== Verification ===' &&
+        echo 'Commands installed:' &&
+        ls -la ~/.codex/prompts/ | grep -E '^l' | wc -l | xargs echo 'Total symlinks:' &&
+        echo '' &&
+        echo 'Sample symlinks:' &&
+        (cd ~/.codex/prompts/ && pwd) &&
+        ls -la ~/.codex/prompts/ | grep -E '^l' | head -3
+      "
+
+  # Test both platforms (direct installation)
+  universal:
+    build:
+      context: ..
+      dockerfile: tests/Dockerfile
+    container_name: agentic-universal
+    volumes:
+      - ..:/home/testuser/agentic-slash-commands
+    command: >
+      bash -c "
+        cd /home/testuser/agentic-slash-commands &&
+        echo '=== Testing Both Platforms Installation ===' &&
+        echo '' &&
+        echo 'Installing Claude Code...' &&
+        bash scripts/install-claude.sh > /dev/null 2>&1 &&
+        echo 'Installing Codex...' &&
+        bash scripts/install-codex.sh > /dev/null 2>&1 &&
+        echo '' &&
+        echo '=== Verification ===' &&
+        echo 'Claude Code skills:' &&
+        ls -la ~/.claude/skills/ 2>/dev/null | grep -c '^l' | xargs echo '  Symlinks:' &&
+        echo 'Codex prompts:' &&
+        ls -la ~/.codex/prompts/ 2>/dev/null | grep -c '^l' | xargs echo '  Symlinks:' &&
+        exit 0
+      "
+
+  # Test idempotency (running installer twice)
+  idempotent:
+    build:
+      context: ..
+      dockerfile: tests/Dockerfile
+    container_name: agentic-idempotent
+    volumes:
+      - ..:/home/testuser/agentic-slash-commands
+    command: >
+      bash -c "
+        cd /home/testuser/agentic-slash-commands &&
+        echo '=== Testing Idempotency ===' &&
+        echo '' &&
+        echo 'First run:' &&
+        yes | timeout 10 bash install.sh >/dev/null 2>&1
+        echo 'First install completed' &&
+        echo '' &&
+        echo 'Second run (should skip all):' &&
+        yes | timeout 10 bash install.sh >/dev/null 2>&1
+        echo 'Second install completed' &&
+        echo '' &&
+        echo '=== Verification ===' &&
+        ls -la ~/.claude/skills/ 2>/dev/null | grep -c '^l' | xargs echo 'Claude symlinks:' &&
+        ls -la ~/.codex/prompts/ 2>/dev/null | grep -c '^l' | xargs echo 'Codex symlinks:' &&
+        exit 0
+      "
+
+  # Test symlink integrity
+  symlinks:
+    build:
+      context: ..
+      dockerfile: tests/Dockerfile
+    container_name: agentic-symlinks
+    volumes:
+      - ..:/home/testuser/agentic-slash-commands
+    command: >
+      bash -c "
+        cd /home/testuser/agentic-slash-commands &&
+        echo '=== Testing Symlink Integrity ===' &&
+        echo '' &&
+        yes | timeout 10 bash install.sh > /dev/null 2>&1
+        echo 'Checking all symlinks point to valid files...' &&
+        echo '' &&
+        all_valid=true
+        for file in ~/.claude/skills/*.md; do
+          if [ -L \"$$file\" ]; then
+            target=$$(readlink \"$$file\")
+            if [ -f \"$$target\" ]; then
+              echo \"✓ $$(basename \"$$file\") -> $$target\"
+            else
+              echo \"✗ $$(basename \"$$file\") -> $$target (BROKEN)\"
+              all_valid=false
+            fi
+          fi
+        done
+        echo ''
+        if [ \"$$all_valid\" = true ]; then
+          echo '✅ All symlinks are valid'
+          exit 0
+        else
+          echo '❌ Some symlinks are broken'
+          exit 1
+        fi
+      "
+
+  # Test warning messages
+  warnings:
+    build:
+      context: ..
+      dockerfile: tests/Dockerfile
+    container_name: agentic-warnings
+    volumes:
+      - ..:/home/testuser/agentic-slash-commands
+    command: >
+      bash -c "
+        cd /home/testuser/agentic-slash-commands &&
+        echo '=== Testing Warning Messages ===' &&
+        echo '' &&
+        echo 'Testing main installer warning...' &&
+        output=$$(echo 'n' | bash install.sh 2>&1) &&
+        if echo \"$$output\" | grep -q 'WARNING: This installer will overwrite existing capabilities'; then
+          echo '✓ Main installer shows overwrite warning'
+        else
+          echo '✗ Main installer missing overwrite warning'
+          exit 1
+        fi &&
+        if echo \"$$output\" | grep -q 'We will attempt to backup'; then
+          echo '✓ Main installer mentions backup functionality'
+        else
+          echo '✗ Main installer missing backup message'
+          exit 1
+        fi &&
+        if echo \"$$output\" | grep -q 'Installation cancelled'; then
+          echo '✓ Main installer allows cancellation'
+        else
+          echo '✗ Main installer does not allow cancellation'
+          exit 1
+        fi &&
+        echo '' &&
+        echo 'Testing Claude Code installer warning...' &&
+        output=$$(bash scripts/install-claude.sh 2>&1) &&
+        if echo \"$$output\" | grep -q 'WARNING: Existing skills'; then
+          echo '✓ Claude Code installer shows warning'
+        else
+          echo '✗ Claude Code installer missing warning'
+          exit 1
+        fi &&
+        if echo \"$$output\" | grep -q 'We will attempt to backup'; then
+          echo '✓ Claude Code installer mentions backup'
+        else
+          echo '✗ Claude Code installer missing backup message'
+          exit 1
+        fi &&
+        echo '' &&
+        echo 'Testing Codex installer warning...' &&
+        output=$$(bash scripts/install-codex.sh 2>&1) &&
+        if echo \"$$output\" | grep -q 'WARNING: Existing prompts'; then
+          echo '✓ Codex installer shows warning'
+        else
+          echo '✗ Codex installer missing warning'
+          exit 1
+        fi &&
+        if echo \"$$output\" | grep -q 'We will attempt to backup'; then
+          echo '✓ Codex installer mentions backup'
+        else
+          echo '✗ Codex installer missing backup message'
+          exit 1
+        fi &&
+        echo '' &&
+        echo 'Testing Gemini installer warning...' &&
+        output=$$(bash scripts/install-gemini.sh 2>&1) &&
+        if echo \"$$output\" | grep -q 'WARNING: Existing commands'; then
+          echo '✓ Gemini installer shows warning'
+        else
+          echo '✗ Gemini installer missing warning'
+          exit 1
+        fi &&
+        if echo \"$$output\" | grep -q 'We will attempt to backup'; then
+          echo '✓ Gemini installer mentions backup'
+        else
+          echo '✗ Gemini installer missing backup message'
+          exit 1
+        fi &&
+        echo '' &&
+        echo '✅ All warning messages are present'
+      "
+
+  # Test backup functionality
+  backup:
+    build:
+      context: ..
+      dockerfile: tests/Dockerfile
+    container_name: agentic-backup
+    volumes:
+      - ..:/home/testuser/agentic-slash-commands
+    command: >
+      bash -c "
+        cd /home/testuser/agentic-slash-commands &&
+        echo '=== Testing Backup Functionality ===' &&
+        echo '' &&
+        echo 'Setting up test environment...' &&
+        mkdir -p ~/.claude/skills &&
+        mkdir -p ~/.codex/prompts &&
+        echo '' &&
+        echo '--- Test 1: First backup (should create .bak files) ---' &&
+        echo 'Creating dummy files to be backed up...' &&
+        echo 'custom skill 1' > ~/.claude/skills/build.md &&
+        echo 'custom skill 2' > ~/.claude/skills/test.md &&
+        echo 'custom prompt 3' > ~/.codex/prompts/lint.md &&
+        echo '' &&
+        echo 'Running Claude Code installer...' &&
+        output=$$(bash scripts/install-claude.sh 2>&1) &&
+        echo '' &&
+        if [ -f ~/.claude/skills/build.md.bak ]; then
+          echo '✓ First backup created: build.md.bak'
+        else
+          echo '✗ First backup NOT created: build.md.bak'
+          exit 1
+        fi &&
+        if [ -f ~/.claude/skills/test.md.bak ]; then
+          echo '✓ First backup created: test.md.bak'
+        else
+          echo '✗ First backup NOT created: test.md.bak'
+          exit 1
+        fi &&
+        if grep -q 'custom skill 1' ~/.claude/skills/build.md.bak; then
+          echo '✓ Backup contains original content'
+        else
+          echo '✗ Backup does NOT contain original content'
+          exit 1
+        fi &&
+        if echo \"$$output\" | grep -q 'Backed up:.*2'; then
+          echo '✓ Summary shows backed up count'
+        else
+          echo '✗ Summary missing backed up count'
+          exit 1
+        fi &&
+        echo '' &&
+        echo '--- Test 2: Second backup (should create timestamped .bak files) ---' &&
+        echo 'Creating new dummy files...' &&
+        rm ~/.claude/skills/build.md &&
+        echo 'custom skill UPDATED' > ~/.claude/skills/build.md &&
+        sleep 1 &&
+        echo '' &&
+        echo 'Running installer again...' &&
+        bash scripts/install-claude.sh >/dev/null 2>&1 &&
+        echo '' &&
+        bak_count=$$(ls ~/.claude/skills/build.md.bak* 2>/dev/null | wc -l) &&
+        if [ \"$$bak_count\" -ge 2 ]; then
+          echo \"✓ Multiple backups exist ($$bak_count files)\"
+        else
+          echo \"✗ Second backup NOT created (only $$bak_count file)\"
+          exit 1
+        fi &&
+        timestamped_backup=$$(ls ~/.claude/skills/build.md.bak.* 2>/dev/null | head -1) &&
+        if [ -n \"$$timestamped_backup\" ]; then
+          echo \"✓ Timestamped backup created: $$(basename \"$$timestamped_backup\")\"
+        else
+          echo '✗ No timestamped backup found'
+          exit 1
+        fi &&
+        echo '' &&
+        echo '--- Test 3: Symlinks should NOT be backed up ---' &&
+        bash scripts/install-codex.sh >/dev/null 2>&1 &&
+        bak_count=$$(ls ~/.codex/prompts/lint.md.bak* 2>/dev/null | wc -l) &&
+        if [ \"$$bak_count\" -eq 1 ]; then
+          echo '✓ Original file was backed up once'
+        else
+          echo \"✗ Wrong number of backups (expected 1, got $$bak_count)\"
+          exit 1
+        fi &&
+        echo 'Running installer again (symlink should not be backed up)...' &&
+        output2=$$(bash scripts/install-codex.sh 2>&1) &&
+        bak_count=$$(ls ~/.codex/prompts/lint.md.bak* 2>/dev/null | wc -l) &&
+        if [ \"$$bak_count\" -eq 1 ]; then
+          echo '✓ Symlink NOT backed up (still only 1 backup)'
+        else
+          echo \"✗ Symlink was backed up (expected 1, got $$bak_count)\"
+          exit 1
+        fi &&
+        echo '' &&
+        echo '✅ All backup tests passed'
+      "
+
+  # Interactive test environment (for manual testing)
+  interactive:
+    build:
+      context: ..
+      dockerfile: tests/Dockerfile
+    container_name: agentic-interactive
+    volumes:
+      - ..:/home/testuser/agentic-slash-commands
+    stdin_open: true
+    tty: true
+    command: bash
