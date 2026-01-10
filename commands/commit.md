@@ -45,14 +45,19 @@ Create git commits with a balanced approach - keep related changes together, spl
 
 1. Pull latest changes from remote to ensure branch is up to date (git pull)
 2. Show current git status and analyse all changes
-3. Assess the scope of changes:
+3. Check conversation context for GitHub issue references:
+   - If a GitHub issue is mentioned in the conversation, determine if changes **close** the issue (complete implementation) or **relate** to it (partial work)
+   - Add appropriate footer: "Closes #123" or "Relates to #123"
+   - If no issue is mentioned in context, proceed without issue reference
+4. Assess the scope of changes:
    - **Small to medium changes**: Keep related changes in a single commit
    - **Large changes**: Only split when the changeset is potentially huge and mixing unrelated functionality
-4. For normal commits:
+5. For normal commits:
    - Stage all related changes together
    - Create ONE short, descriptive commit message (max 50 characters)
    - Focus on the main purpose of the change
-5. For huge changesets only:
+   - Add GitHub issue footer if applicable (from step 3)
+6. For huge changesets only:
    - Group by major functional areas
    - Stage files by logical groups
    - Create separate commits for distinct features/fixes
