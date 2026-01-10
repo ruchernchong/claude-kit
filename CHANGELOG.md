@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/ruchernchong/claude-kit/compare/v1.2.0...v1.3.0) (2026-01-10)
+
+
+### Features
+
+* add folder organization skill ([ccb7f92](https://github.com/ruchernchong/claude-kit/commit/ccb7f9239278035072423d7ec9025bcaa3dec4bb))
+
 # [1.2.0](https://github.com/ruchernchong/claude-kit/compare/v1.1.0...v1.2.0) (2026-01-08)
 
 
