@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/ruchernchong/claude-kit/compare/v1.3.0...v1.4.0) (2026-01-10)
+
+
+### Features
+
+* add GitHub issue refs to commits ([e98fada](https://github.com/ruchernchong/claude-kit/commit/e98fadae46291fe00e02e449688158c04f9d755e))
+
 # [1.3.0](https://github.com/ruchernchong/claude-kit/compare/v1.2.0...v1.3.0) (2026-01-10)
 
 
