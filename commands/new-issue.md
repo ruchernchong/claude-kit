@@ -1,7 +1,7 @@
 ---
 description: Create a GitHub issue with title and description (auto-assigned)
 model: sonnet
-allowed-tools: Bash(gh issue create), Bash(gh issue list), Bash(gh repo view)
+allowed-tools: Bash(gh repo view), mcp__github__list_issue_types, mcp__github__issue_write, mcp__github__get_me
 ---
 
 ## Language Conventions
@@ -15,21 +15,28 @@ allowed-tools: Bash(gh issue create), Bash(gh issue list), Bash(gh repo view)
 
 Create a GitHub issue with the following workflow:
 
-1. Check if we're in a GitHub repository
-2. **Check for ISSUE_TEMPLATE format first:**
+1. Check if we're in a GitHub repository and get owner/repo info
+2. **Check for organization issue types:**
+   - Use `github/list_issue_types` MCP tool with the repository owner
+   - If issue types exist, select the most appropriate type based on the issue context (e.g., "Bug", "Feature", "Task")
+   - Note: This will fail for user-owned repositories (not organizations) - this is expected, proceed without issue type
+3. **Check for ISSUE_TEMPLATE format:**
    - Look for issue templates in `.github/ISSUE_TEMPLATE/` or `.github/` directories
    - If templates exist, use the most appropriate template format (bug report, feature request, etc.)
    - Parse template structure and fill in the required sections
-3. **If no ISSUE_TEMPLATE exists, use custom format:**
+4. **If no ISSUE_TEMPLATE exists, use custom format:**
    - Infer issue title from user's request context
    - Generate appropriate issue description based on the context
-4. Create issue with title, description, and auto-assign to current user:
-   - Use `gh issue create --assignee @me` to self-assign the issue
-   - If assignment fails (user not a collaborator), GitHub CLI will create the issue without assignment
-   - This provides convenience for repository collaborators while remaining safe for contributors
-5. Optionally add existing labels or milestone (only use labels that already exist in the repository)
-   - Note: Issue is already auto-assigned to the current user via `--assignee @me` in step 4
-   - Additional assignees can be added using `--assignee` flag (comma-separated for multiple)
+5. **Get current user for assignment:**
+   - Use `github/get_me` MCP tool to get the current authenticated user's login
+6. **Create issue using `github/issue_write` MCP tool:**
+   - Set `method: "create"`
+   - Include `owner`, `repo`, `title`, `body`
+   - Include `type` parameter if organization issue types are available (from step 2)
+   - Include `assignees` array with current user's login for self-assignment
+   - If assignment fails (user not a collaborator), the issue will still be created without assignment
+7. Optionally add existing labels or milestone (only use labels that already exist in the repository)
+   - Additional assignees can be added to the `assignees` array
 
 For the issue title:
 - Use natural, descriptive language (NOT conventional commits format like "feat:", "fix:", "chore:")
