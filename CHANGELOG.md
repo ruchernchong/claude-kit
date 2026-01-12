@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/ruchernchong/claude-kit/compare/v1.4.0...v1.5.0) (2026-01-12)
+
+
+### Features
+
+* add org issue type support to new-issue ([d11c2bb](https://github.com/ruchernchong/claude-kit/commit/d11c2bbfbc7b8698dfc493a796a1534b30772b74))
+
 # [1.4.0](https://github.com/ruchernchong/claude-kit/compare/v1.3.0...v1.4.0) (2026-01-10)
 
 
