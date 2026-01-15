@@ -1,0 +1,5 @@
+# Sync vendor skills from submodule after checkout
+if [ -d "vercel-labs/agent-skills/skills" ]; then
+  cp -r vercel-labs/agent-skills/skills/react-best-practices skills/ 2>/dev/null || true
+  cp -r vercel-labs/agent-skills/skills/web-design-guidelines skills/ 2>/dev/null || true
+fi
