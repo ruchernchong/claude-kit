@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/ruchernchong/claude-kit/compare/v1.5.0...v1.6.0) (2026-01-15)
+
+
+### Features
+
+* add react and web-design skills ([76a6fe7](https://github.com/ruchernchong/claude-kit/commit/76a6fe7e6c01a6737928b24368cbf3c783f13611))
+
 # [1.5.0](https://github.com/ruchernchong/claude-kit/compare/v1.4.0...v1.5.0) (2026-01-12)
 
 
