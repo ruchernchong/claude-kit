@@ -1,5 +1,5 @@
 ---
-name: folder-structure
+name: folder-org
 description: Project code structure and file organization. Use when creating files, organizing components, or deciding where code should live. (project)
 ---
 

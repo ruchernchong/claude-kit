@@ -1,4 +1,5 @@
 ---
+name: security
 description: Run security audit with GitLeaks pre-commit hook setup and code analysis
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep, Task
 ---
