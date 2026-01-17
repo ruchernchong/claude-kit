@@ -49,7 +49,6 @@ Agents are specialized subagents for complex, multi-step tasks. They're invoked 
 | api-researcher | Researches APIs and integration patterns |
 | cache-strategist | Designs caching strategies with Upstash Redis |
 | ci-cd-helper | Sets up CI/CD pipelines |
-| code-reviewer | Reviews code for quality, bugs, and security |
 | component-builder | Builds reusable UI components with Next.js, HeroUI v3, and Tailwind CSS v4 |
 | css-optimizer | Optimizes CSS and Tailwind usage |
 | database-optimizer | Optimizes database queries and schema with Drizzle ORM and Neon Postgres |
@@ -58,7 +57,6 @@ Agents are specialized subagents for complex, multi-step tasks. They're invoked 
 | design-system-helper | Maintains design system consistency with HeroUI v3 and Tailwind CSS v4 |
 | library-evaluator | Evaluates libraries for project fit |
 | migration-assistant | Helps plan database migrations with Drizzle |
-| refactor-assistant | Helps refactor code following best practices |
 | responsive-checker | Checks responsive design and breakpoints |
 | security-auditor | Audits code for security vulnerabilities |
 | test-writer | Generates tests with Vitest and React Testing Library |
@@ -170,7 +168,7 @@ The symlinks automatically reflect updates - no reinstallation needed.
 
 ```
 .
-├── agents/            # 18 specialized agent definitions
+├── agents/            # 16 specialized agent definitions
 ├── commands/          # 6 slash command definitions
 ├── skills/            # 2 multi-command workflows
 │   ├── security/      # Security audit skill

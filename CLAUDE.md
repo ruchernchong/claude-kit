@@ -35,7 +35,7 @@ pnpm test:docker            # Interactive test runner with Docker
 
 ```
 .
-├── agents/            # Specialized agent definitions (18 agents)
+├── agents/            # Specialized agent definitions (16 agents)
 ├── commands/          # Slash command definitions (6 commands)
 ├── skills/            # Skills with multiple commands (security, tailwind)
 │   ├── security/      # Security audit skill
@@ -86,7 +86,7 @@ allowed-tools: List of permitted tools
 
 ### Agent Categories
 
-- **Code quality**: code-reviewer, refactor-assistant, security-auditor
+- **Code quality**: security-auditor
 - **Testing**: test-writer, debug-assistant
 - **Infrastructure**: ci-cd-helper
 - **Database**: database-optimizer, migration-assistant, cache-strategist
