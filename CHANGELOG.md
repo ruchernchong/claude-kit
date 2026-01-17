@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/ruchernchong/claude-kit/compare/v1.8.0...v1.9.0) (2026-01-17)
+
+
+### Features
+
+* add statusline installer ([eec77d1](https://github.com/ruchernchong/claude-kit/commit/eec77d153c093eb43296bc950a7f7b72b3bfd09a))
+
 # [1.8.0](https://github.com/ruchernchong/claude-kit/compare/v1.7.0...v1.8.0) (2026-01-17)
 
 
