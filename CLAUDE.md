@@ -24,6 +24,7 @@ pnpm biome check . --write  # Fix issues automatically
 # Setup and installation
 pnpm bootstrap              # Interactive setup - creates symlinks in ~/.claude/ and ~/.mcp.json
 pnpm install-commands       # Interactive command installer - select which commands to install
+pnpm install-statusline     # Interactive statusline installer - configure Claude Code statusline
 
 # Run tests
 pnpm test:docker            # Interactive test runner with Docker
@@ -40,9 +41,11 @@ pnpm test:docker            # Interactive test runner with Docker
 ├── skills/            # Skills with multiple commands (security, tailwind)
 │   ├── security/      # Security audit skill
 │   └── tailwind/      # Tailwind CSS optimization skill
+├── statuslines/       # Statusline scripts for Claude Code
 ├── src/               # TypeScript CLI source
 │   ├── setup.ts               # Interactive setup script
 │   ├── install-commands.ts    # Interactive command installer (supports --ci flag)
+│   ├── install-statusline.ts  # Interactive statusline installer (supports --ci flag)
 │   ├── test-runner.ts         # Interactive test runner
 │   ├── utils.ts               # Shared utilities (symlinks, file ops)
 │   └── utils.test.ts          # Unit tests for utilities
@@ -111,6 +114,7 @@ The project includes interactive TypeScript CLI tools built with [@clack/prompts
 
 - **setup.ts** - Interactive setup wizard with confirmation prompts and progress spinners
 - **install-commands.ts** - Multi-select interface for choosing which commands to install
+- **install-statusline.ts** - Statusline installer for configuring Claude Code statusline
 - **test-runner.ts** - Interactive test selection and Docker integration
 - **utils.ts** - Shared utilities for symlink management and file operations
 
@@ -126,6 +130,12 @@ Skills are multi-command workflows that combine multiple operations:
 
 - **security** - Run security audit with GitLeaks pre-commit hook setup and code analysis
 - **tailwind** - Audit and fix Tailwind CSS anti-patterns (spacing, size-*, gap, 8px grid, etc.)
+
+## Statuslines
+
+Statuslines display real-time information in the Claude Code interface. Install with `pnpm install-statusline`.
+
+- **full** - 3-line display showing project, branch, model, version, context usage, cost, and tokens
 
 ## Conventions
 

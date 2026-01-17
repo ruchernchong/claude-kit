@@ -38,6 +38,13 @@
 
    Select which slash commands to install using an interactive multi-select menu.
 
+4. (Optional) Install a statusline:
+   ```bash
+   pnpm install-statusline
+   ```
+
+   Configure a custom statusline for Claude Code.
+
 ## Available Agents
 
 Agents are specialized subagents for complex, multi-step tasks. They're invoked via the Task tool.
@@ -82,6 +89,21 @@ Skills are multi-command workflows that combine multiple operations:
 |-------|-------------|
 | `security` | Run security audit with GitLeaks pre-commit hook setup and code analysis |
 | `tailwind` | Audit and fix Tailwind CSS anti-patterns (spacing direction, size-*, gap preference, 8px grid, etc.) |
+
+## Available Statuslines
+
+Statuslines display real-time information in the Claude Code interface.
+
+| Statusline | Description |
+|------------|-------------|
+| `full` | 3-line display: project/branch/model/version, context usage bar, cost/burn rate/tokens |
+
+**Preview:**
+```
+📁 project 🌿 main 🤖 Opus 📟 v1.0.85
+🧠 Context: 42% [====------]
+💰 $1.23 ($5.50/h) 📊 125K tok
+```
 
 ## Creating New Agents
 
@@ -147,6 +169,7 @@ The project uses TypeScript with [@clack/prompts](https://github.com/natemoo-re/
 
 - `pnpm bootstrap` - Interactive setup wizard
 - `pnpm install-commands` - Select commands to install
+- `pnpm install-statusline` - Configure statusline
 - `pnpm test:docker` - Interactive test runner
 
 All CLI tools feature:
@@ -173,6 +196,7 @@ The symlinks automatically reflect updates - no reinstallation needed.
 ├── skills/            # 2 multi-command workflows
 │   ├── security/      # Security audit skill
 │   └── tailwind/      # Tailwind CSS optimization skill
+├── statuslines/       # Statusline scripts for Claude Code
 ├── src/               # TypeScript CLI source code
 ├── tests/             # Docker-based test infrastructure
 └── .mcp.json          # MCP server configuration

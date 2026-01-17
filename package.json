@@ -7,6 +7,7 @@
     "bootstrap": "tsx src/setup.ts",
     "install-commands": "tsx src/install-commands.ts",
     "install-skills": "tsx src/install-skills.ts",
+    "install-statusline": "tsx src/install-statusline.ts",
     "lint": "biome check",
     "format": "biome format --write src",
     "test": "vitest run",
