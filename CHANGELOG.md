@@ -1,3 +1,15 @@
+# [1.8.0](https://github.com/ruchernchong/claude-kit/compare/v1.7.0...v1.8.0) (2026-01-17)
+
+
+### Bug Fixes
+
+* add missing name field to skills ([8258cbf](https://github.com/ruchernchong/claude-kit/commit/8258cbfce1dfe61b706947087b1d6b5b171063f7))
+
+
+### Features
+
+* add personal skills installer CLI ([c896819](https://github.com/ruchernchong/claude-kit/commit/c8968197c4cfc178ac34d1f1dcd78e2c6a161b4a))
+
 # [1.7.0](https://github.com/ruchernchong/claude-kit/compare/v1.6.0...v1.7.0) (2026-01-17)
 
 
