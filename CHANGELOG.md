@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/ruchernchong/claude-kit/compare/v1.6.0...v1.7.0) (2026-01-17)
+
+
+### Features
+
+* add HeroUI v3 skill ([684bdc6](https://github.com/ruchernchong/claude-kit/commit/684bdc63a250c55c4be52b3ba8b781e8fe83679a))
+
 # [1.6.0](https://github.com/ruchernchong/claude-kit/compare/v1.5.0...v1.6.0) (2026-01-15)
 
 
