@@ -15,6 +15,7 @@ export default defineConfig({
         "**/*.d.ts",
         "src/setup.ts",
         "src/install-commands.ts",
+        "src/install-skills.ts",
         "src/test-runner.ts",
       ],
       thresholds: {
