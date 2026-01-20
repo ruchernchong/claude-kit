@@ -1,6 +1,8 @@
+# Code Generation
+
 - Automatically use context7 for code generation and library documentation.
 
-## Browser Automation
+# Browser Automation
 
 Use `agent-browser` for web automation. Run `agent-browser --help` for all commands.
 
