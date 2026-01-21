@@ -1,4 +1,5 @@
 ---
+name: create-pr
 description: Push branch and create GitHub pull request (auto-assigned)
 model: sonnet
 allowed-tools: Bash(git status), Bash(git push), Bash(git log), Bash(git diff), Bash(gh pr create), Bash(gh pr list), Bash(git branch)
@@ -39,4 +40,3 @@ For the PR description:
 - **No verbose explanations** - be direct and specific
 - **No test plan, acceptance criteria, or additional sections**
 - Focus only on what changed and why
-

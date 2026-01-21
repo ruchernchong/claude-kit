@@ -4,11 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-A collection of powertools for Claude Code including specialized agents, slash commands, skills, and MCP server configuration. Each is a markdown file with YAML frontmatter defining its configuration, followed by detailed behavioral instructions.
+A collection of powertools for Claude Code including specialized agents, skills, and MCP server configuration. Each is a markdown file with YAML frontmatter defining its configuration, followed by detailed behavioral instructions.
 
 - **Agents**: Specialized subagents for complex tasks (code review, testing, debugging, etc.)
-- **Slash Commands**: User-invocable commands for development workflows (invoke with `/command-name`)
-- **Skills**: Multi-command workflows (security auditing, Tailwind CSS optimization)
+- **Skills**: User-invocable workflows and commands (invoke with `/skill-name`)
 - **MCP Config**: Pre-configured MCP servers for extended capabilities
 
 ## Commands
@@ -23,7 +22,6 @@ pnpm biome check . --write  # Fix issues automatically
 
 # Setup and installation
 pnpm bootstrap              # Interactive setup - creates symlinks in ~/.claude/ and ~/.mcp.json
-pnpm install-commands       # Interactive command installer - select which commands to install
 pnpm install-statusline     # Interactive statusline installer - configure Claude Code statusline
 
 # Run tests
@@ -37,14 +35,19 @@ pnpm test:docker            # Interactive test runner with Docker
 ```
 .
 ├── agents/            # Specialized agent definitions (16 agents)
-├── commands/          # Slash command definitions (6 commands)
-├── skills/            # Skills with multiple commands (security, tailwind)
+├── skills/            # Skills and commands (invoke with /skill-name)
+│   ├── commit/        # Smart git commit
+│   ├── create-branch/ # Branch creation with GitHub issue integration
+│   ├── create-issue/  # GitHub issue creation
+│   ├── create-pr/     # Pull request creation
+│   ├── sync-docs/     # Documentation sync
+│   ├── update-issue/  # GitHub issue updates
 │   ├── security/      # Security audit skill
-│   └── tailwind/      # Tailwind CSS optimization skill
+│   ├── tailwind/      # Tailwind CSS optimization skill
+│   └── ...            # Other skills (heroui, folder-org, etc.)
 ├── statuslines/       # Statusline scripts for Claude Code
 ├── src/               # TypeScript CLI source
 │   ├── setup.ts               # Interactive setup script
-│   ├── install-commands.ts    # Interactive command installer (supports --ci flag)
 │   ├── install-statusline.ts  # Interactive statusline installer (supports --ci flag)
 │   ├── test-runner.ts         # Interactive test runner
 │   ├── utils.ts               # Shared utilities (symlinks, file ops)
@@ -73,13 +76,14 @@ model: sonnet | opus | haiku
 [Detailed instructions and behavior guidelines]
 ```
 
-### Slash Command Format
+### Skill Format
 
-Each command in `commands/` follows this structure:
+Each skill in `skills/<skill-name>/SKILL.md` follows this structure:
 
 ```markdown
 ---
-description: Command description (what it does and when to use it)
+name: skill-name
+description: Skill description (what it does and when to use it)
 model: sonnet  # Optional: specify Claude model
 allowed-tools: List of permitted tools
 ---
@@ -97,23 +101,33 @@ allowed-tools: List of permitted tools
 - **Dependencies**: dependency-updater, library-evaluator
 - **API**: api-designer, api-researcher
 
-### Slash Commands Available
+### Skills Available
 
-Invoke with `/command-name`:
+Invoke with `/skill-name`:
 
+**Git & GitHub Workflows:**
 - `/commit` - Smart git commit with GitLeaks security check and concise messages
-- `/new-branch` - Create branches with GitHub issue integration
-- `/new-issue` - GitHub issue creation with template support
-- `/new-pr` - Automated PR creation with commit analysis
-- `/sync-docs` - Sync documentation with project state
+- `/create-branch` - Create branches with GitHub issue integration
+- `/create-issue` - GitHub issue creation with template support
+- `/create-pr` - Automated PR creation with commit analysis
 - `/update-issue` - Update GitHub issue title, body, labels, or assignees
+
+**Code Quality & Documentation:**
+- `/security` - Run security audit with GitLeaks pre-commit hook setup and code analysis
+- `/tailwind` - Audit and fix Tailwind CSS anti-patterns (spacing, size-*, gap, 8px grid, etc.)
+- `/sync-docs` - Sync documentation with project state
+- `/web-design-guidelines` - Review UI code for Web Interface Guidelines compliance
+
+**Development Helpers:**
+- `/folder-org` - Project code structure and file organization guidance
+- `/heroui` - Build accessible UIs using HeroUI v3 components
+- `/react-best-practices` - React and Next.js performance optimization guidelines
 
 ## CLI Tools
 
 The project includes interactive TypeScript CLI tools built with [@clack/prompts](https://github.com/natemoo-re/clack):
 
 - **setup.ts** - Interactive setup wizard with confirmation prompts and progress spinners
-- **install-commands.ts** - Multi-select interface for choosing which commands to install
 - **install-statusline.ts** - Statusline installer for configuring Claude Code statusline
 - **test-runner.ts** - Interactive test selection and Docker integration
 - **utils.ts** - Shared utilities for symlink management and file operations
@@ -123,13 +137,6 @@ All tools provide:
 - Progress spinners for long operations
 - Graceful cancellation (Ctrl+C)
 - Colored output and summaries
-
-## Skills
-
-Skills are multi-command workflows that combine multiple operations:
-
-- **security** - Run security audit with GitLeaks pre-commit hook setup and code analysis
-- **tailwind** - Audit and fix Tailwind CSS anti-patterns (spacing, size-*, gap, 8px grid, etc.)
 
 ## Statuslines
 

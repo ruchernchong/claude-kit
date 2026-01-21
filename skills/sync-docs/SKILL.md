@@ -1,4 +1,5 @@
 ---
+name: sync-docs
 description: Update and maintain CLAUDE.md and README.md documentation
 model: sonnet
 allowed-tools: Read(*), Write(*), Edit(*), MultiEdit(*), Glob(*), Grep(*), Bash(npm*), Bash(yarn*), Bash(find*), Bash(ls*), WebFetch(*)
@@ -10,12 +11,12 @@ Update and maintain project documentation for CLAUDE.md and README.md:
 **Purpose:** Keep Claude's project instructions current and accurate
 
 - **Scan project structure:** Check for new tools, scripts, build systems
-- **Update build commands:** Sync with package.json, Makefile, or build configs  
+- **Update build commands:** Sync with package.json, Makefile, or build configs
 - **Add new patterns:** Document coding conventions, file organization
 - **Refresh tool commands:** Update linting, testing, deployment instructions
 - **Check environment setup:** Verify installation and setup steps
 
-## 2. README.md Maintenance  
+## 2. README.md Maintenance
 **Purpose:** Keep public project documentation up-to-date
 
 - **Update installation:** Check dependencies, requirements, setup steps

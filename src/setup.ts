@@ -27,7 +27,7 @@ import {
   type SymlinkResult,
 } from "./utils.js";
 
-const DIRECTORY_SYMLINKS = ["agents", "commands", "skills"];
+const DIRECTORY_SYMLINKS = ["agents", "skills"];
 const FILE_SYMLINKS = [".mcp.json"];
 
 async function detectConflicts(): Promise<ConflictInfo[]> {

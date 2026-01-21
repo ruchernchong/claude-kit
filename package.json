@@ -1,11 +1,10 @@
 {
   "name": "claude-kit",
   "version": "0.1.0",
-  "description": "A collection of powertools for Claude Code including specialized agents, slash commands, and skills",
+  "description": "A collection of powertools for Claude Code including specialized agents and skills",
   "type": "module",
   "scripts": {
     "bootstrap": "tsx src/setup.ts",
-    "install-commands": "tsx src/install-commands.ts",
     "install-skills": "tsx src/install-skills.ts",
     "install-statusline": "tsx src/install-statusline.ts",
     "lint": "biome check",

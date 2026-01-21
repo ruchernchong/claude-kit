@@ -1,4 +1,5 @@
 ---
+name: commit
 description: Smart git commit with short, concise messages
 model: sonnet
 allowed-tools: Bash(git status), Bash(git add), Bash(git diff), Bash(git commit), Bash(git log), Bash(git pull), Bash(gitleaks), Read, Edit, Glob
@@ -69,4 +70,3 @@ Create git commits with a balanced approach - keep related changes together, spl
 - Prefer cohesive commits over artificially split ones
 
 This approach maintains clean git history with consistently short, readable commit messages.
-

@@ -1,4 +1,5 @@
 ---
+name: create-branch
 description: Create and checkout a new git branch with smart validation and GitHub issue integration
 model: sonnet
 allowed-tools: Bash(git status), Bash(git branch), Bash(git checkout), Bash(git push), Bash(git rev-parse), Bash(git ls-remote), Bash(gh issue develop), Bash(gh issue list), Bash(gh issue view)
