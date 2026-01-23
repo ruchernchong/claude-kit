@@ -19,6 +19,7 @@ import {
   createDirectorySymlink,
   createFileSymlink,
   findBackups,
+  getDirectoryItems,
   HOME_DIR,
   logResult,
   printSummary,
@@ -27,25 +28,43 @@ import {
   type SymlinkResult,
 } from "./utils.js";
 
-const DIRECTORY_SYMLINKS = ["agents", "skills"];
+// Directories containing items to symlink individually
+const AGENTS_DIR = path.join(ROOT_DIR, "agents");
+const SKILLS_DIR = path.join(ROOT_DIR, "skills");
+
+// File symlinks
 const FILE_SYMLINKS = [".mcp.json"];
 
 async function detectConflicts(): Promise<ConflictInfo[]> {
   const conflicts: ConflictInfo[] = [];
 
-  // Check directory symlinks
-  for (const directoryName of DIRECTORY_SYMLINKS) {
-    const conflict = await checkDirectoryConflict(
-      directoryName,
-      ROOT_DIR,
-      CLAUDE_DIR,
+  // Check individual agent files (.md files)
+  const { files: agentFiles } = await getDirectoryItems(AGENTS_DIR);
+  for (const agentFile of agentFiles) {
+    const conflict = await checkFileConflict(
+      agentFile,
+      AGENTS_DIR,
+      path.join(CLAUDE_DIR, "agents"),
     );
     if (conflict) {
       conflicts.push(conflict);
     }
   }
 
-  // Check file symlinks
+  // Check individual skill directories
+  const { directories: skillDirs } = await getDirectoryItems(SKILLS_DIR);
+  for (const skillDir of skillDirs) {
+    const conflict = await checkDirectoryConflict(
+      skillDir,
+      SKILLS_DIR,
+      path.join(CLAUDE_DIR, "skills"),
+    );
+    if (conflict) {
+      conflicts.push(conflict);
+    }
+  }
+
+  // Check file symlinks (.mcp.json)
   for (const fileName of FILE_SYMLINKS) {
     const conflict = await checkFileConflict(fileName, ROOT_DIR, HOME_DIR);
     if (conflict) {
@@ -135,12 +154,25 @@ async function runSetup() {
   const symlinkResults: SymlinkResult[] = [];
   const symlinkOptions = { forceReplace };
 
-  // Create directory symlinks (agents, commands, skills)
-  for (const directoryName of DIRECTORY_SYMLINKS) {
+  // Create individual agent symlinks (.md files)
+  const { files: agentFiles } = await getDirectoryItems(AGENTS_DIR);
+  for (const agentFile of agentFiles) {
+    const result = await createFileSymlink(
+      agentFile,
+      AGENTS_DIR,
+      path.join(CLAUDE_DIR, "agents"),
+      symlinkOptions,
+    );
+    symlinkResults.push(result);
+  }
+
+  // Create individual skill symlinks (directories)
+  const { directories: skillDirs } = await getDirectoryItems(SKILLS_DIR);
+  for (const skillDir of skillDirs) {
     const result = await createDirectorySymlink(
-      directoryName,
-      ROOT_DIR,
-      CLAUDE_DIR,
+      skillDir,
+      SKILLS_DIR,
+      path.join(CLAUDE_DIR, "skills"),
       symlinkOptions,
     );
     symlinkResults.push(result);

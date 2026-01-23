@@ -31,7 +31,16 @@ export async function isSymlink(filePath: string): Promise<boolean> {
   try {
     const stats = await fs.lstat(filePath);
     return stats.isSymbolicLink();
-  } catch {
+  } catch (err) {
+    // Handle ELOOP (symlink loop) errors
+    if (
+      err &&
+      typeof err === "object" &&
+      "code" in err &&
+      err.code === "ELOOP"
+    ) {
+      return true; // It is a symlink, just broken
+    }
     return false;
   }
 }
@@ -134,7 +143,7 @@ export interface SymlinkOptions {
 }
 
 /**
- * Create a directory symlink
+ * Create a directory symlink using relative paths
  */
 export async function createDirectorySymlink(
   name: string,
@@ -157,13 +166,25 @@ export async function createDirectorySymlink(
   // Ensure parent directory exists
   await fs.mkdir(path.dirname(target), { recursive: true });
 
+  // Calculate relative path from target's directory to source
+  const relativePath = path.relative(path.dirname(target), source);
+
   if (await isSymlink(target)) {
-    const existingTarget = await fs.readlink(target);
-    if (existingTarget === source) {
-      return { name, status: "skipped", message: "already configured" };
+    try {
+      const existingTarget = await fs.readlink(target);
+      // Resolve to absolute for comparison (handles both relative and absolute symlinks)
+      const resolvedExisting = path.resolve(
+        path.dirname(target),
+        existingTarget,
+      );
+      if (resolvedExisting === path.resolve(source)) {
+        return { name, status: "skipped", message: "already configured" };
+      }
+    } catch {
+      // ELOOP or other error - remove the broken symlink
     }
     // Remove symlink pointing elsewhere
-    await fs.unlink(target);
+    await fs.rm(target, { force: true });
   } else if (await isDirectory(target)) {
     // Remove existing directory (no backup for directories)
     if (!forceReplace) {
@@ -191,11 +212,11 @@ export async function createDirectorySymlink(
   }
 
   try {
-    await fs.symlink(source, target);
+    await fs.symlink(relativePath, target);
     return {
       name,
       status: "installed",
-      message: `created symlink → ${source}`,
+      message: `created symlink → ${relativePath}`,
     };
   } catch {
     return { name, status: "failed", message: "failed to create symlink" };
@@ -203,7 +224,7 @@ export async function createDirectorySymlink(
 }
 
 /**
- * Create a file symlink
+ * Create a file symlink using relative paths
  */
 export async function createFileSymlink(
   name: string,
@@ -222,13 +243,25 @@ export async function createFileSymlink(
   // Ensure parent directory exists
   await fs.mkdir(path.dirname(target), { recursive: true });
 
+  // Calculate relative path from target's directory to source
+  const relativePath = path.relative(path.dirname(target), source);
+
   if (await isSymlink(target)) {
-    const existingTarget = await fs.readlink(target);
-    if (existingTarget === source) {
-      return { name, status: "skipped", message: "already configured" };
+    try {
+      const existingTarget = await fs.readlink(target);
+      // Resolve to absolute for comparison (handles both relative and absolute symlinks)
+      const resolvedExisting = path.resolve(
+        path.dirname(target),
+        existingTarget,
+      );
+      if (resolvedExisting === path.resolve(source)) {
+        return { name, status: "skipped", message: "already configured" };
+      }
+    } catch {
+      // ELOOP or other error - remove the broken symlink
     }
     // Remove symlink pointing elsewhere
-    await fs.unlink(target);
+    await fs.rm(target, { force: true });
   } else if (await exists(target)) {
     // Backup existing file before replacing
     if (!forceReplace) {
@@ -251,11 +284,11 @@ export async function createFileSymlink(
   }
 
   try {
-    await fs.symlink(source, target);
+    await fs.symlink(relativePath, target);
     return {
       name,
       status: "installed",
-      message: `created symlink → ${source}`,
+      message: `created symlink → ${relativePath}`,
     };
   } catch {
     return { name, status: "failed", message: "failed to create symlink" };
@@ -312,6 +345,36 @@ export async function getMarkdownFiles(dir: string): Promise<string[]> {
   } catch {
     return [];
   }
+}
+
+/**
+ * Get all items (files and directories) in a directory
+ * Excludes backup files (.bak) and hidden files (starting with .)
+ */
+export async function getDirectoryItems(
+  dir: string,
+): Promise<{ files: string[]; directories: string[] }> {
+  const files: string[] = [];
+  const directories: string[] = [];
+
+  try {
+    const entries = await fs.readdir(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      // Skip hidden files and backup files
+      if (entry.name.startsWith(".") || entry.name.includes(".bak")) {
+        continue;
+      }
+      if (entry.isDirectory()) {
+        directories.push(entry.name);
+      } else if (entry.isFile()) {
+        files.push(entry.name);
+      }
+    }
+  } catch {
+    // Directory doesn't exist or can't be read
+  }
+
+  return { files, directories };
 }
 
 export interface ConflictInfo {
