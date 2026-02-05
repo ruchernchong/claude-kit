@@ -1,11 +1,8 @@
 {
   "mcpServers": {
     "context7": {
-      "type": "http",
-      "url": "https://mcp.context7.com/mcp",
-      "headers": {
-        "CONTEXT7_API_KEY": "${CONTEXT7_API_KEY}"
-      }
+      "command": "bunx",
+      "args": ["-y", "@upstash/context7-mcp", "--api-key", "${CONTEXT7_API_KEY}"]
     },
     "github": {
       "type": "http",
@@ -17,10 +14,6 @@
     "next-devtools": {
       "command": "bunx",
       "args": ["-y", "next-devtools-mcp@latest"]
-    },
-    "playwright": {
-      "command": "bunx",
-      "args": ["-y", "@playwright/mcp@latest"]
     }
   }
 }
