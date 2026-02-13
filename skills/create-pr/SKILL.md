@@ -1,8 +1,9 @@
 ---
 name: create-pr
 description: Push branch and create GitHub pull request (auto-assigned)
-model: sonnet
-allowed-tools: Bash(git status), Bash(git push), Bash(git log), Bash(git diff), Bash(gh pr create), Bash(gh pr list), Bash(git branch)
+allowed-tools: Bash(git status) Bash(git push) Bash(git log) Bash(git diff) Bash(gh pr create) Bash(gh pr list) Bash(git branch)
+metadata:
+  model: sonnet
 ---
 
 ## Language Conventions

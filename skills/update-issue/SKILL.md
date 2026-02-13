@@ -1,8 +1,9 @@
 ---
 name: update-issue
 description: Update a GitHub issue with new title, body, labels, or assignees
-model: sonnet
-allowed-tools: Bash(gh issue view), Bash(gh issue edit), Bash(gh repo view)
+allowed-tools: Bash(gh issue view) Bash(gh issue edit) Bash(gh repo view)
+metadata:
+  model: sonnet
 ---
 
 ## Language Conventions

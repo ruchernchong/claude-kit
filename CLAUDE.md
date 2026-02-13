@@ -40,11 +40,12 @@ pnpm test:docker            # Interactive test runner with Docker
 │   ├── create-branch/ # Branch creation with GitHub issue integration
 │   ├── create-issue/  # GitHub issue creation
 │   ├── create-pr/     # Pull request creation
-│   ├── sync-docs/     # Documentation sync
-│   ├── update-issue/  # GitHub issue updates
+│   ├── folder-org/    # Project code structure guidance
+│   ├── heroui/        # HeroUI v3 component development
 │   ├── security/      # Security audit skill
+│   ├── sync-docs/     # Documentation sync
 │   ├── tailwind/      # Tailwind CSS optimization skill
-│   └── ...            # Other skills (heroui, folder-org, etc.)
+│   └── update-issue/  # GitHub issue updates
 ├── statuslines/       # Statusline scripts for Claude Code
 ├── src/               # TypeScript CLI source
 │   ├── setup.ts               # Interactive setup script
@@ -78,14 +79,15 @@ model: sonnet | opus | haiku
 
 ### Skill Format
 
-Each skill in `skills/<skill-name>/SKILL.md` follows this structure:
+Each skill in `skills/<skill-name>/SKILL.md` follows the [Agent Skills spec](https://agentskills.io):
 
 ```markdown
 ---
 name: skill-name
 description: Skill description (what it does and when to use it)
-model: sonnet  # Optional: specify Claude model
-allowed-tools: List of permitted tools
+allowed-tools: Space-delimited list of permitted tools
+metadata:
+  model: sonnet
 ---
 
 [Detailed instructions and behavior guidelines]
@@ -116,12 +118,10 @@ Invoke with `/skill-name`:
 - `/security` - Run security audit with GitLeaks pre-commit hook setup and code analysis
 - `/tailwind` - Audit and fix Tailwind CSS anti-patterns (spacing, size-*, gap, 8px grid, etc.)
 - `/sync-docs` - Sync documentation with project state
-- `/web-design-guidelines` - Review UI code for Web Interface Guidelines compliance
 
 **Development Helpers:**
 - `/folder-org` - Project code structure and file organization guidance
 - `/heroui` - Build accessible UIs using HeroUI v3 components
-- `/react-best-practices` - React and Next.js performance optimization guidelines
 
 ## CLI Tools
 

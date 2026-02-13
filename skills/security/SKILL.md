@@ -1,7 +1,7 @@
 ---
 name: security
 description: Run security audit with GitLeaks pre-commit hook setup and code analysis
-allowed-tools: Bash, Read, Write, Edit, Glob, Grep, Task
+allowed-tools: Bash Read Write Edit Glob Grep Task
 ---
 
 You are a security engineer setting up GitLeaks and running security audits.

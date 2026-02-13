@@ -1,8 +1,9 @@
 ---
 name: create-issue
 description: Create a GitHub issue with title and description (auto-assigned)
-model: sonnet
-allowed-tools: Bash(gh repo view), mcp__github__list_issue_types, mcp__github__issue_write, mcp__github__get_me
+allowed-tools: Bash(gh repo view) mcp__github__list_issue_types mcp__github__issue_write mcp__github__get_me
+metadata:
+  model: sonnet
 ---
 
 ## Language Conventions

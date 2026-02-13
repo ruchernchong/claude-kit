@@ -1,8 +1,9 @@
 ---
 name: commit
 description: Smart git commit with short, concise messages
-model: sonnet
-allowed-tools: Bash(git status), Bash(git add), Bash(git diff), Bash(git commit), Bash(git log), Bash(git pull), Bash(gitleaks), Read, Edit, Glob
+allowed-tools: Bash(git status) Bash(git add) Bash(git diff) Bash(git commit) Bash(git log) Bash(git pull) Bash(gitleaks) Read Edit Glob
+metadata:
+  model: sonnet
 ---
 
 ## Pre-Commit Security Check

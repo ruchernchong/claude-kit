@@ -20,8 +20,8 @@ fi
 
 # List of dangerous patterns to block
 DANGEROUS_PATTERNS=(
-  "rm -rf /"           # Delete root
-  "rm -rf /*"          # Delete all root contents
+  "rm -rf /$"          # Delete root
+  "rm -rf /\*"         # Delete all root contents
   "dd if="             # Disk destroyer
   "mkfs"               # Format filesystem
   ":(){ :|:& };:"      # Fork bomb
