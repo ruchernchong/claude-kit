@@ -31,6 +31,7 @@ import {
 // Directories containing items to symlink individually
 const AGENTS_DIR = path.join(ROOT_DIR, "agents");
 const SKILLS_DIR = path.join(ROOT_DIR, "skills");
+const HOOKS_DIR = path.join(ROOT_DIR, "hooks");
 
 // File symlinks
 const FILE_SYMLINKS = [".mcp.json"];
@@ -58,6 +59,19 @@ async function detectConflicts(): Promise<ConflictInfo[]> {
       skillDir,
       SKILLS_DIR,
       path.join(CLAUDE_DIR, "skills"),
+    );
+    if (conflict) {
+      conflicts.push(conflict);
+    }
+  }
+
+  // Check individual hook files (.sh files)
+  const { files: hookFiles } = await getDirectoryItems(HOOKS_DIR);
+  for (const hookFile of hookFiles) {
+    const conflict = await checkFileConflict(
+      hookFile,
+      HOOKS_DIR,
+      path.join(CLAUDE_DIR, "hooks"),
     );
     if (conflict) {
       conflicts.push(conflict);
@@ -173,6 +187,18 @@ async function runSetup() {
       skillDir,
       SKILLS_DIR,
       path.join(CLAUDE_DIR, "skills"),
+      symlinkOptions,
+    );
+    symlinkResults.push(result);
+  }
+
+  // Create individual hook symlinks (.sh files)
+  const { files: hookFiles } = await getDirectoryItems(HOOKS_DIR);
+  for (const hookFile of hookFiles) {
+    const result = await createFileSymlink(
+      hookFile,
+      HOOKS_DIR,
+      path.join(CLAUDE_DIR, "hooks"),
       symlinkOptions,
     );
     symlinkResults.push(result);
@@ -308,7 +334,7 @@ async function main() {
       {
         value: "setup",
         label: "Setup",
-        hint: "Create symlinks for agents, commands, skills, and config",
+        hint: "Create symlinks for agents, skills, hooks, and config",
       },
       {
         value: "restore",

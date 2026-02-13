@@ -62,7 +62,9 @@ describe("Symlink Creation", () => {
       const result = await createSymlink(sourceFile, targetDir, "link.txt");
 
       expect(result.status).toBe("installed");
-      expect(await fs.readlink(path.join(targetDir, "link.txt"))).toBe(sourceFile);
+      expect(await fs.readlink(path.join(targetDir, "link.txt"))).toBe(
+        sourceFile,
+      );
     });
 
     it("should backup and replace existing file", async () => {
@@ -93,7 +95,11 @@ describe("Symlink Creation", () => {
     it("should create symlink to directory", async () => {
       await fs.mkdir(path.join(sourceDir, "subdir"));
 
-      const result = await createDirectorySymlink("subdir", sourceDir, targetDir);
+      const result = await createDirectorySymlink(
+        "subdir",
+        sourceDir,
+        targetDir,
+      );
 
       expect(result.status).toBe("installed");
       expect(result.message).toContain("created symlink");
@@ -101,7 +107,11 @@ describe("Symlink Creation", () => {
     });
 
     it("should skip if source directory does not exist", async () => {
-      const result = await createDirectorySymlink("nonexistent", sourceDir, targetDir);
+      const result = await createDirectorySymlink(
+        "nonexistent",
+        sourceDir,
+        targetDir,
+      );
 
       expect(result.status).toBe("skipped");
       expect(result.message).toBe("source directory does not exist");
@@ -112,7 +122,11 @@ describe("Symlink Creation", () => {
       await fs.mkdir(subDir);
       await fs.symlink(subDir, path.join(targetDir, "subdir"));
 
-      const result = await createDirectorySymlink("subdir", sourceDir, targetDir);
+      const result = await createDirectorySymlink(
+        "subdir",
+        sourceDir,
+        targetDir,
+      );
 
       expect(result.status).toBe("skipped");
       expect(result.message).toBe("already configured");
@@ -122,7 +136,11 @@ describe("Symlink Creation", () => {
       await fs.mkdir(path.join(sourceDir, "subdir"));
       await fs.mkdir(path.join(targetDir, "subdir"));
 
-      const result = await createDirectorySymlink("subdir", sourceDir, targetDir);
+      const result = await createDirectorySymlink(
+        "subdir",
+        sourceDir,
+        targetDir,
+      );
 
       expect(result.status).toBe("failed");
       expect(result.message).toContain("directory exists");
@@ -134,9 +152,14 @@ describe("Symlink Creation", () => {
       await fs.mkdir(existingDir);
       await fs.writeFile(path.join(existingDir, "file.txt"), "content");
 
-      const result = await createDirectorySymlink("subdir", sourceDir, targetDir, {
-        forceReplace: true,
-      });
+      const result = await createDirectorySymlink(
+        "subdir",
+        sourceDir,
+        targetDir,
+        {
+          forceReplace: true,
+        },
+      );
 
       expect(result.status).toBe("installed");
       expect(await isSymlink(path.join(targetDir, "subdir"))).toBe(true);
@@ -149,7 +172,11 @@ describe("Symlink Creation", () => {
       await fs.mkdir(otherDir);
       await fs.symlink(otherDir, path.join(targetDir, "subdir"));
 
-      const result = await createDirectorySymlink("subdir", sourceDir, targetDir);
+      const result = await createDirectorySymlink(
+        "subdir",
+        sourceDir,
+        targetDir,
+      );
 
       expect(result.status).toBe("installed");
       expect(await fs.readlink(path.join(targetDir, "subdir"))).toBe(subDir);
@@ -159,10 +186,16 @@ describe("Symlink Creation", () => {
       await fs.mkdir(path.join(sourceDir, "subdir"));
       await fs.writeFile(path.join(targetDir, "subdir"), "content");
 
-      const result = await createDirectorySymlink("subdir", sourceDir, targetDir);
+      const result = await createDirectorySymlink(
+        "subdir",
+        sourceDir,
+        targetDir,
+      );
 
       expect(result.status).toBe("failed");
-      expect(result.message).toContain("exists but is not a symlink or directory");
+      expect(result.message).toContain(
+        "exists but is not a symlink or directory",
+      );
     });
   });
 
@@ -178,7 +211,11 @@ describe("Symlink Creation", () => {
     });
 
     it("should skip if source file does not exist", async () => {
-      const result = await createFileSymlink("nonexistent.txt", sourceDir, targetDir);
+      const result = await createFileSymlink(
+        "nonexistent.txt",
+        sourceDir,
+        targetDir,
+      );
 
       expect(result.status).toBe("skipped");
       expect(result.message).toBe("source file does not exist");
@@ -228,7 +265,9 @@ describe("Symlink Creation", () => {
       const result = await createFileSymlink("file.txt", sourceDir, targetDir);
 
       expect(result.status).toBe("installed");
-      expect(await fs.readlink(path.join(targetDir, "file.txt"))).toBe(sourceFile);
+      expect(await fs.readlink(path.join(targetDir, "file.txt"))).toBe(
+        sourceFile,
+      );
     });
   });
 });

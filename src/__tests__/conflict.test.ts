@@ -23,13 +23,21 @@ describe("Conflict Checking", () => {
 
   describe("checkDirectoryConflict", () => {
     it("should return null when source directory does not exist", async () => {
-      const result = await checkDirectoryConflict("nonexistent", sourceDir, targetDir);
+      const result = await checkDirectoryConflict(
+        "nonexistent",
+        sourceDir,
+        targetDir,
+      );
       expect(result).toBeNull();
     });
 
     it("should return null when target does not exist", async () => {
       await fs.mkdir(path.join(sourceDir, "subdir"));
-      const result = await checkDirectoryConflict("subdir", sourceDir, targetDir);
+      const result = await checkDirectoryConflict(
+        "subdir",
+        sourceDir,
+        targetDir,
+      );
       expect(result).toBeNull();
     });
 
@@ -38,7 +46,11 @@ describe("Conflict Checking", () => {
       await fs.mkdir(subDir);
       await fs.symlink(subDir, path.join(targetDir, "subdir"));
 
-      const result = await checkDirectoryConflict("subdir", sourceDir, targetDir);
+      const result = await checkDirectoryConflict(
+        "subdir",
+        sourceDir,
+        targetDir,
+      );
       expect(result).toBeNull();
     });
 
@@ -49,7 +61,11 @@ describe("Conflict Checking", () => {
       await fs.mkdir(otherDir);
       await fs.symlink(otherDir, path.join(targetDir, "subdir"));
 
-      const result = await checkDirectoryConflict("subdir", sourceDir, targetDir);
+      const result = await checkDirectoryConflict(
+        "subdir",
+        sourceDir,
+        targetDir,
+      );
 
       expect(result).not.toBeNull();
       expect(result?.conflictType).toBe("existing_symlink");
@@ -60,7 +76,11 @@ describe("Conflict Checking", () => {
       await fs.mkdir(path.join(sourceDir, "subdir"));
       await fs.mkdir(path.join(targetDir, "subdir"));
 
-      const result = await checkDirectoryConflict("subdir", sourceDir, targetDir);
+      const result = await checkDirectoryConflict(
+        "subdir",
+        sourceDir,
+        targetDir,
+      );
 
       expect(result).not.toBeNull();
       expect(result?.conflictType).toBe("existing_directory");
@@ -70,7 +90,11 @@ describe("Conflict Checking", () => {
       await fs.mkdir(path.join(sourceDir, "subdir"));
       await fs.writeFile(path.join(targetDir, "subdir"), "file content");
 
-      const result = await checkDirectoryConflict("subdir", sourceDir, targetDir);
+      const result = await checkDirectoryConflict(
+        "subdir",
+        sourceDir,
+        targetDir,
+      );
 
       expect(result).not.toBeNull();
       expect(result?.conflictType).toBe("existing_file");
@@ -79,7 +103,11 @@ describe("Conflict Checking", () => {
 
   describe("checkFileConflict", () => {
     it("should return null when source file does not exist", async () => {
-      const result = await checkFileConflict("nonexistent.txt", sourceDir, targetDir);
+      const result = await checkFileConflict(
+        "nonexistent.txt",
+        sourceDir,
+        targetDir,
+      );
       expect(result).toBeNull();
     });
 

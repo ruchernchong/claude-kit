@@ -4,22 +4,38 @@ import { type SymlinkResult, logResult, printSummary } from "../utils";
 describe("Logging and Summary", () => {
   describe("logResult", () => {
     it("should log installed status", () => {
-      const result: SymlinkResult = { name: "test", status: "installed", message: "created" };
+      const result: SymlinkResult = {
+        name: "test",
+        status: "installed",
+        message: "created",
+      };
       expect(() => logResult(result)).not.toThrow();
     });
 
     it("should log skipped status", () => {
-      const result: SymlinkResult = { name: "test", status: "skipped", message: "exists" };
+      const result: SymlinkResult = {
+        name: "test",
+        status: "skipped",
+        message: "exists",
+      };
       expect(() => logResult(result)).not.toThrow();
     });
 
     it("should log failed status", () => {
-      const result: SymlinkResult = { name: "test", status: "failed", message: "error" };
+      const result: SymlinkResult = {
+        name: "test",
+        status: "failed",
+        message: "error",
+      };
       expect(() => logResult(result)).not.toThrow();
     });
 
     it("should log backed_up status", () => {
-      const result: SymlinkResult = { name: "test", status: "backed_up", message: "backed up" };
+      const result: SymlinkResult = {
+        name: "test",
+        status: "backed_up",
+        message: "backed up",
+      };
       expect(() => logResult(result)).not.toThrow();
     });
   });
@@ -40,7 +56,9 @@ describe("Logging and Summary", () => {
     });
 
     it("should handle only installed results", () => {
-      const results: SymlinkResult[] = [{ name: "a", status: "installed", message: "created" }];
+      const results: SymlinkResult[] = [
+        { name: "a", status: "installed", message: "created" },
+      ];
       expect(() => printSummary(results)).not.toThrow();
     });
   });
