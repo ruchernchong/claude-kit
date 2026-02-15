@@ -12,7 +12,6 @@ import {
 
 interface Skill {
   repo: string;
-  skill: string;
   label: string;
 }
 
@@ -25,7 +24,6 @@ interface InstallResult {
 const SKILLS: Skill[] = [
   {
     repo: "better-auth/skills",
-    skill: "Better Auth Best Practices",
     label: "Better Auth",
   },
 ];
@@ -35,7 +33,7 @@ const ciMode = args.includes("--ci");
 
 function installSkill(skill: Skill): InstallResult {
   try {
-    execFileSync("bunx", ["skills", "i", skill.repo, "--skill", skill.skill], {
+    execFileSync("bunx", ["@tartinerlabs/skills", "add", skill.repo], {
       stdio: "pipe",
     });
     return {
@@ -62,7 +60,7 @@ async function runInteractive(): Promise<Skill[]> {
     options: SKILLS.map((skill) => ({
       value: skill,
       label: skill.label,
-      hint: `${skill.repo} → ${skill.skill}`,
+      hint: skill.repo,
     })),
     initialValues: SKILLS,
   });

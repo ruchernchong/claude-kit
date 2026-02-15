@@ -79,7 +79,7 @@ model: sonnet | opus | haiku
 
 ### Skill Format
 
-Each skill in `skills/<skill-name>/SKILL.md` follows the [Agent Skills spec](https://agentskills.io):
+Each skill in `skills/<skill-name>/SKILL.md` follows the [Agent Skills spec](https://agentskills.io) (via [`@tartinerlabs/skills`](https://www.npmjs.com/package/@tartinerlabs/skills)):
 
 ```markdown
 ---
