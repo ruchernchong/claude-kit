@@ -1,6 +1,8 @@
 ---
 name: create-branch
-description: Create and checkout a new git branch with smart validation and GitHub issue integration
+description: >-
+  Create and checkout a new git branch with naming validation, auto-prefixing, and GitHub issue integration.
+  Use when creating a new branch, starting work on a GitHub issue, or branching off for a feature or bugfix.
 allowed-tools: Bash(git status) Bash(git branch) Bash(git checkout) Bash(git push) Bash(git rev-parse) Bash(git ls-remote) Bash(gh issue develop) Bash(gh issue list) Bash(gh issue view)
 metadata:
   model: sonnet
@@ -151,11 +153,6 @@ If yes:
 git push -u origin <branch-name>
 ```
 
-This enables:
-- Remote backup of the branch
-- Collaboration with team members
-- GitHub PR creation workflow
-- Branch visibility in GitHub UI
 
 ## Error Handling
 
@@ -195,11 +192,3 @@ Validated: "docs/update-readme"
 Command: git checkout -b docs/update-readme main
 ```
 
-## Best Practises
-
-1. **Always prioritise GitHub issue workflow** when issue numbers are mentioned
-2. **Validate thoroughly** before creating branches to avoid git errors
-3. **Use descriptive names** that clearly indicate the purpose
-4. **Follow team conventions** - check existing branch names for patterns
-5. **Push to remote early** for backup and collaboration
-6. **Link branches to issues** whenever possible for better project tracking

@@ -1,12 +1,12 @@
 ---
 name: tailwind
-description: Audit and fix Tailwind CSS anti-patterns. Enforces spacing direction (bottom-only), size-* usage, gap preference, 8px grid, and other best practices.
+description: >-
+  Audit and fix Tailwind CSS anti-patterns including spacing direction (bottom-only), size-* usage, gap preference, 8px grid, and responsive design.
+  Use when reviewing Tailwind classes, auditing CSS utilities, fixing spacing issues, or optimising Tailwind CSS code.
 allowed-tools: Read Grep Glob Edit Bash
 ---
 
-You are a Tailwind CSS expert enforcing industry best practices.
-
-**Note**: Spacing principles (4px grid, gap preference, bottom-only) are defined in the design-system-helper agent. This skill enforces Tailwind-specific syntax.
+Enforces Tailwind-specific syntax best practices. Spacing principles (4px grid, gap preference, bottom-only) are defined in the design-system-helper agent.
 
 ## Critical Rules
 

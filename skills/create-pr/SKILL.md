@@ -1,6 +1,8 @@
 ---
 name: create-pr
-description: Push branch and create GitHub pull request (auto-assigned)
+description: >-
+  Push branch and create a GitHub pull request with auto-assignment and commit-based description.
+  Use when opening a PR, submitting changes for review, or pushing a branch to create a pull request.
 allowed-tools: Bash(git status) Bash(git push) Bash(git log) Bash(git diff) Bash(gh pr create) Bash(gh pr list) Bash(git branch)
 metadata:
   model: sonnet
@@ -24,20 +26,14 @@ Create a pull request with the following workflow:
    - Use `gh pr create --assignee @me` to self-assign the pull request
    - If assignment fails (user not a collaborator), GitHub CLI will create the PR without assignment
    - This provides convenience for repository collaborators while remaining safe for contributors
-5. Optional: Additional assignees can be added using `--assignee` flag (comma-separated for multiple)
-   - Note: PR is already auto-assigned to the current user via `--assignee @me` in step 4
+5. Verify PR was created: `gh pr view --web` to confirm
 
-**CONCISE PR RULE: Keep everything brief and focused**
+**PR title**: Natural, descriptive language (not conventional commits format). Concise and specific.
 
-Generate a title based on the commit history and user's request context.
+**PR description**: Maximum 1-2 bullet points summarising key changes. No verbose explanations, test plans, or extra sections.
 
-For the PR title:
-- Use natural, descriptive language (NOT conventional commits format like "feat:", "fix:", "chore:")
-- Make it clear and specific to the changes
-- Keep it concise but informative
-
-For the PR description:
-- **Maximum 1-2 bullet points** summarizing the key changes
-- **No verbose explanations** - be direct and specific
-- **No test plan, acceptance criteria, or additional sections**
-- Focus only on what changed and why
+**Example:**
+```bash
+gh pr create --assignee @me --title "Add user authentication endpoint" --body "- Implement JWT-based login and signup routes
+- Add middleware for protected routes"
+```

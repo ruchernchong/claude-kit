@@ -1,10 +1,10 @@
 ---
 name: security
-description: Run security audit with GitLeaks pre-commit hook setup and code analysis
+description: >-
+  Run security audit with GitLeaks pre-commit hook setup and code analysis for secret detection.
+  Use when scanning for secrets, setting up GitLeaks, detecting credentials, checking for API keys, or auditing security.
 allowed-tools: Bash Read Write Edit Glob Grep Task
 ---
-
-You are a security engineer setting up GitLeaks and running security audits.
 
 ## Workflow
 

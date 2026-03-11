@@ -1,6 +1,8 @@
 ---
 name: commit
-description: Smart git commit with short, concise messages
+description: >-
+  Smart git commit with short, concise messages, GitLeaks security check, and conventional commit format.
+  Use when writing commit messages, committing staged changes, running git commit, or preparing a git diff for commit.
 allowed-tools: Bash(git status) Bash(git add) Bash(git diff) Bash(git commit) Bash(git log) Bash(git pull) Bash(gitleaks) Read Edit Glob
 metadata:
   model: sonnet
@@ -70,4 +72,3 @@ Create git commits with a balanced approach - keep related changes together, spl
 - Be specific but concise (e.g., "fix auth redirect bug", "add user search")
 - Prefer cohesive commits over artificially split ones
 
-This approach maintains clean git history with consistently short, readable commit messages.
