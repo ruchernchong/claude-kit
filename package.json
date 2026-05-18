@@ -27,12 +27,12 @@
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@types/node": "^22.10.0",
-    "@vitest/coverage-v8": "4.0.16",
+    "@vitest/coverage-v8": "4.1.6",
     "husky": "^9.1.7",
     "semantic-release": "^25.0.2",
     "tsx": "^4.19.0",
     "typescript": "^5.7.2",
-    "vitest": "^4.0.16"
+    "vitest": "4.1.6"
   },
   "packageManager": "pnpm@11.1.2"
 }
