@@ -17,7 +17,6 @@
     "release": "semantic-release"
   },
   "license": "MIT",
-  "packageManager": "pnpm@10.22.0",
   "dependencies": {
     "@clack/prompts": "^0.10.0"
   },
@@ -34,5 +33,6 @@
     "tsx": "^4.19.0",
     "typescript": "^5.7.2",
     "vitest": "^4.0.16"
-  }
+  },
+  "packageManager": "pnpm@11.1.2"
 }
