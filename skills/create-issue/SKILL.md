@@ -1,6 +1,8 @@
 ---
 name: create-issue
-description: Create a GitHub issue with title and description (auto-assigned)
+description: >-
+  Create a GitHub issue with title, description, labels, and auto-assignment via MCP tools.
+  Use when opening an issue, filing a bug, creating a feature request, or reporting a problem on GitHub.
 allowed-tools: Bash(gh repo view) mcp__github__list_issue_types mcp__github__issue_write mcp__github__get_me
 metadata:
   model: sonnet
@@ -40,17 +42,6 @@ Create a GitHub issue with the following workflow:
 7. Optionally add existing labels or milestone (only use labels that already exist in the repository)
    - Additional assignees can be added to the `assignees` array
 
-For the issue title:
-- Use natural, descriptive language (NOT conventional commits format like "feat:", "fix:", "chore:")
-- Make it clear and specific to the problem or feature
-- Keep it concise but informative
+**Issue title**: Use natural, descriptive language (not conventional commits format). Keep it concise and specific.
 
-For the issue description (when using custom format):
-- Include clear problem statement or feature request
-- Add steps to reproduce (if bug report)
-- Keep it structured and actionable
-
-For ISSUE_TEMPLATE format:
-- Follow the exact template structure and required fields
-- Fill in template placeholders with relevant information from user context
-- Maintain template formatting and sections
+**Issue description**: Include clear problem statement or feature request with steps to reproduce (for bugs). If an ISSUE_TEMPLATE exists, follow its structure and required fields exactly.

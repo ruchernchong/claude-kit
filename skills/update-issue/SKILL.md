@@ -1,6 +1,8 @@
 ---
 name: update-issue
-description: Update a GitHub issue with new title, body, labels, or assignees
+description: >-
+  Update a GitHub issue with new title, body, labels, or assignees using gh CLI.
+  Use when editing an issue, modifying issue details, changing labels, or reassigning a GitHub issue.
 allowed-tools: Bash(gh issue view) Bash(gh issue edit) Bash(gh repo view)
 metadata:
   model: sonnet
@@ -44,24 +46,13 @@ Update a GitHub issue with the following workflow:
    - Show summary of all updates made
    - Display success message with link to updated issue
 
-For the issue title:
-- Use natural, descriptive language
-- Keep it concise but informative
-- Match the style of existing issue titles in the repository
+**Title**: Natural, descriptive language matching existing issue title style.
 
-For the issue body (when using ISSUE_TEMPLATE format):
-- Follow the exact template structure
-- Preserve required sections and formatting
-- Update only the sections being changed
-- Maintain template sections
+**Body**: If ISSUE_TEMPLATE format, preserve template structure. Otherwise use clear, structured format.
 
-For the issue body (custom format):
-- Include clear problem statement or feature details
-- Add relevant context from the update
-- Keep it structured and actionable
-- Maintain existing formatting style when possible
+**Labels/assignees**: Only use existing repository labels. Validate assignees are collaborators. Show current values before changes.
 
-For labels and assignees:
-- Only add labels that already exist in the repository
-- Validate assignees are valid repository collaborators
-- Show current labels and assignees before making changes
+**Example:**
+```bash
+gh issue edit 123 --title "Fix login redirect on mobile" --add-label "bug" --add-assignee "@me"
+```
